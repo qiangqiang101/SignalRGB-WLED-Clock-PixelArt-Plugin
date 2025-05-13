@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignalRGB WLED Matrix Pixel Art Painter</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #1e1e1e;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        #controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        button {
+            padding: 8px 16px;
+            background-color: #7066e0;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: rgb(100, 89, 221);
+        }
+
+        input[type="number"] {
+            width: 50px;
+            padding: 8px;
+            border-radius: 4px;
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+        }
+
+        #canvas-container {
+            border: 2px solid #555;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #matrix-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .label {
+            margin-right: 5px;
+            font-size: 14px;
+        }
+
+        .swal2-html-container code {
+            display: block;
+            padding: 20px 50px;
+            border-radius: 4px;
+            background-color: #333;
+            color: white;
+            border: 1px solid #555;
+            font-size: 12px;
+        }
+
+        .code-container {
+            position: relative;
+        }
+
+        .copy-code {
+            padding: 4px 8px;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: transparent;
+            border: 1px solid #555;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+    <h1>SignalRGB WLED Matrix Pixel Art Painter</h1>
+
+    <div id="controls">
+        <span class="label">Size:</span>
+        <input id="size-cols" type="number" value="16" min="1" step="1" />
+        <span class="label">x</span>
+        <input id="size-rows" type="number" value="16" min="1" step="1" />
+
+        <span class="label">Mode:</span>
+        <select id="draw-mode">
+            <option value="draw">Draw</option>
+            <option value="fill">Fill</option>
+            <option value="clear">Clear</option>
+        </select>
+
+        <button id="clear-all">Clear All</button>
+        <button id="export-data">Export Data</button>
+    </div>
+
+    <div id="canvas-container">
+        <canvas id="matrix-canvas"></canvas>
+    </div>
+
+    <div id="matrix-info">
+        <span id="mouse-pos">Position: (-1, -1)</span> |
+        <span id="cell-size">Cell Size: 0x0</span>
+    </div>
+
+    <script>
+        $('#size-cols, #size-rows').on('input', function (e) {
+            COLS = parseInt($('#size-cols').val());
+            ROWS = parseInt($('#size-rows').val());
+
+            matrixData = Array(ROWS).fill().map(() => Array(COLS).fill('#000000'));
+
+            resizeCanvas();
+        });
+    </script>
+
+    <script>
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        const drawModeSelect = document.getElementById('draw-mode');
+        const clearAllBtn = document.getElementById('clear-all');
+        const exportDataBtn = document.getElementById('export-data');
+        const mousePosDisplay = document.getElementById('mouse-pos');
+        const cellSizeDisplay = document.getElementById('cell-size');
+
+        // Matrix dimensions
+        let COLS = parseInt($('#size-cols').val());
+        let ROWS = parseInt($('#size-rows').val());
+        let cellWidth, cellHeight;
+
+        // Matrix data - stores color for each cell
+        let matrixData = Array(ROWS).fill().map(() => Array(COLS).fill('#000000'));
+
+        // Drawing state
+        let isDrawing = false;
+        let currentMode = drawModeSelect.value;
+
+        // Resize the canvas to fill the screen while maintaining aspect ratio
+        function resizeCanvas() {
+            const maxWidth = window.innerWidth * 0.9;
+            const maxHeight = window.innerHeight * 0.6;
+
+            // Calculate the cell size to fit the matrix in the available space
+            const cellWidthByWidth = maxWidth / COLS;
+            const cellHeightByHeight = maxHeight / ROWS;
+
+            // Use the smaller of the two to ensure the entire matrix fits
+            const cellSize = Math.floor(Math.min(cellWidthByWidth, cellHeightByHeight));
+
+            cellWidth = cellSize;
+            cellHeight = cellSize;
+
+            canvas.width = COLS * cellWidth;
+            canvas.height = ROWS * cellHeight;
+
+            cellSizeDisplay.textContent = `Cell Size: ${cellWidth}x${cellHeight}`;
+
+            // Redraw the matrix with the current data
+            drawMatrix();
+        }
+
+        // Draw the entire matrix
+        function drawMatrix() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw each cell
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLS; col++) {
+                    const x = col * cellWidth;
+                    const y = row * cellHeight;
+
+                    // Draw the cell background
+                    ctx.fillStyle = matrixData[row][col];
+                    ctx.fillRect(x, y, cellWidth, cellHeight);
+
+                    // Draw the cell border
+                    ctx.strokeStyle = '#333333';
+                    ctx.strokeRect(x, y, cellWidth, cellHeight);
+                }
+            }
+        }
+
+        // Convert mouse position to matrix coordinates
+        function getMatrixCoords(event) {
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            const col = Math.floor(x / cellWidth);
+            const row = Math.floor(y / cellHeight);
+
+            // Make sure we're within bounds
+            if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
+                return { row, col };
+            }
+
+            return null;
+        }
+
+        // Update a cell's color
+        function updateCell(row, col, color) {
+            if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+                matrixData[row][col] = color;
+
+                // Redraw just this cell
+                const x = col * cellWidth;
+                const y = row * cellHeight;
+
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, cellWidth, cellHeight);
+
+                ctx.strokeStyle = '#333333';
+                ctx.strokeRect(x, y, cellWidth, cellHeight);
+            }
+        }
+
+        // Fill all cells with a specific color
+        function fillAll(color) {
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLS; col++) {
+                    matrixData[row][col] = color;
+                }
+            }
+            drawMatrix();
+        }
+
+        function copyToClipboard(text) {
+            var $temp = $('<input>');
+            $('body').append($temp);
+            $temp.val(text).select();
+            document.execCommand('copy');
+            $temp.remove();
+
+            Swal.fire({
+                position: "top-end",
+                icon: "success",
+                theme: "dark",
+                title: "Code copied to clipboard.",
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+
+        // Export matrix data as JSON
+        function exportData() {
+            const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0');
+
+            Swal.fire({
+                title: "Success",
+                icon: "success",
+                theme: "dark",
+                html: `<div class="code-container"><code>${dataStr}</code><button class="copy-code" onclick="copyToClipboard(${dataStr});">Copy</button></div>`,
+                showCloseButton: false,
+                showCancelButton: false,
+                focusConfirm: false,
+                confirmButtonText: `OK`,
+                confirmButtonAriaLabel: 'OK',
+                cancelButtonText: 'Cancel',
+                cancelButtonAriaLabel: "Thumbs down"
+            });
+        }
+
+        // Event listeners
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            const coords = getMatrixCoords(e);
+            if (coords) {
+                switch (currentMode) {
+                    case 'draw':
+                        updateCell(coords.row, coords.col, '#ffffff');
+                        break;
+                    case 'fill':
+                        fillAll('#ffffff');
+                        break;
+                    case 'clear':
+                        updateCell(coords.row, coords.col, '#000000');
+                        break;
+                }
+            }
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            const coords = getMatrixCoords(e);
+            if (coords) {
+                mousePosDisplay.textContent = `Position: (${coords.col}, ${coords.row})`;
+
+                if (isDrawing) {
+                    switch (currentMode) {
+                        case 'draw':
+                            updateCell(coords.row, coords.col, '#ffffff');
+                            break;
+                        case 'clear':
+                            updateCell(coords.row, coords.col, '#000000');
+                            break;
+                    }
+                }
+            } else {
+                mousePosDisplay.textContent = 'Position: (-1, -1)';
+            }
+        });
+
+        canvas.addEventListener('mouseout', () => {
+            mousePosDisplay.textContent = 'Position: (-1, -1)';
+        });
+
+        window.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+
+        drawModeSelect.addEventListener('change', () => {
+            currentMode = drawModeSelect.value;
+        });
+
+        clearAllBtn.addEventListener('click', () => {
+            fillAll('#000000');
+        });
+
+        exportDataBtn.addEventListener('click', () => {
+            exportData();
+        });
+
+        window.addEventListener('resize', resizeCanvas);
+
+        // Initial setup
+        resizeCanvas();
+    </script>
+</body>
+
+</html>
