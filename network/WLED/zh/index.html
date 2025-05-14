@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SignalRGB WLED Matrix Pixel Art Painter</title>
+    <title>SignalRGB WLED/Nollie1 像素屏画家</title>
     <style>
         body {
             display: flex;
@@ -105,21 +105,20 @@
             right: 10px;
         }
     </style>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert2/11.16.1/sweetalert2.all.min.js"></script>
 </head>
 
 <body>
     <div class="language-selector">
-        <span class="label">Language:</span>
+        <span class="label">语言:</span>
         <select id="language-dropdown">
-            <option value="english">English</option>
             <option value="chinese">中文</option>
+            <option value="english">English</option>
         </select>
     </div>
 
-    <h1>SignalRGB WLED Matrix Pixel Art Painter</h1>
+    <h1>SignalRGB WLED/Nollie1 像素屏画家</h1>
 
     <div id="controls">
         <span class="label">Size:</span>
@@ -127,15 +126,15 @@
         <span class="label">x</span>
         <input id="size-rows" type="number" value="16" min="1" step="1" />
 
-        <span class="label">Mode:</span>
+        <span class="label">模式:</span>
         <select id="draw-mode">
-            <option value="draw">Draw</option>
-            <option value="fill">Fill</option>
-            <option value="clear">Clear</option>
+            <option value="draw">绘图模式</option>
+            <option value="fill">填充模式</option>
+            <option value="clear">擦除模式</option>
         </select>
 
-        <button id="clear-all">Clear All</button>
-        <button id="export-data">Export Data</button>
+        <button id="clear-all">清除全部</button>
+        <button id="export-data">导出数据</button>
     </div>
 
     <div id="canvas-container">
@@ -143,15 +142,15 @@
     </div>
 
     <div id="matrix-info">
-        <span id="mouse-pos">Position: (-1, -1)</span> |
-        <span id="cell-size">Cell Size: 0x0</span>
+        <span id="mouse-pos">位置: (-1, -1)</span> |
+        <span id="cell-size">像元大小: 0x0</span>
     </div>
 
     <script>
         $('#language-dropdown').on('change', function() {
             switch ($(this).val()) {
-                case 'chinese':
-                    window.location = './zh';
+                case 'english':
+                    window.location = '../';
                     break;
                 default:
             }
@@ -206,7 +205,7 @@
             canvas.width = COLS * cellWidth;
             canvas.height = ROWS * cellHeight;
 
-            cellSizeDisplay.textContent = `Cell Size: ${cellWidth}x${cellHeight}`;
+            cellSizeDisplay.textContent = `像元大小: ${cellWidth}x${cellHeight}`;
 
             // Redraw the matrix with the current data
             drawMatrix();
@@ -288,7 +287,7 @@
                 position: "top-end",
                 icon: "success",
                 theme: "dark",
-                title: "Code copied to clipboard.",
+                title: "代码已复制到剪贴板。",
                 showConfirmButton: false,
                 timer: 1500
             });
@@ -299,16 +298,16 @@
             const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0');
 
             Swal.fire({
-                title: "Copy the code below into SignalRGB",
+                title: "将以下代码复制到SignalRGB",
                 icon: "success",
                 theme: "dark",
-                html: `<div class="code-container"><code>${dataStr}</code><button class="copy-code" onclick="copyToClipboard(${dataStr});">Copy</button></div>`,
+                html: `<div class="code-container"><code>${dataStr}</code><button class="copy-code" onclick="copyToClipboard(${dataStr});">复制</button></div>`,
                 showCloseButton: false,
                 showCancelButton: false,
                 focusConfirm: false,
-                confirmButtonText: `OK`,
+                confirmButtonText: `确认`,
                 confirmButtonAriaLabel: 'OK',
-                cancelButtonText: 'Cancel',
+                cancelButtonText: '取消',
                 cancelButtonAriaLabel: "Thumbs down"
             });
         }
@@ -335,7 +334,7 @@
         canvas.addEventListener('mousemove', (e) => {
             const coords = getMatrixCoords(e);
             if (coords) {
-                mousePosDisplay.textContent = `Position: (${coords.col}, ${coords.row})`;
+                mousePosDisplay.textContent = `位置: (${coords.col}, ${coords.row})`;
 
                 if (isDrawing) {
                     switch (currentMode) {
@@ -348,12 +347,12 @@
                     }
                 }
             } else {
-                mousePosDisplay.textContent = 'Position: (-1, -1)';
+                mousePosDisplay.textContent = '位置: (-1, -1)';
             }
         });
 
         canvas.addEventListener('mouseout', () => {
-            mousePosDisplay.textContent = 'Position: (-1, -1)';
+            mousePosDisplay.textContent = '位置: (-1, -1)';
         });
 
         window.addEventListener('mouseup', () => {
