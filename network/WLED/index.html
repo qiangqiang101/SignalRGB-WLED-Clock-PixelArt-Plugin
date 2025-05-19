@@ -19,13 +19,21 @@
         }
 
         #controls {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        #tools {
             margin-bottom: 20px;
             display: flex;
             gap: 10px;
             align-items: center;
         }
 
-        button {
+        button,
+        input[type="radio"]+label {
             padding: 8px 16px;
             background-color: #7066e0;
             color: white;
@@ -35,8 +43,52 @@
             font-size: 14px;
         }
 
-        button:hover {
+        button:hover,
+        input[type="radio"]+label:hover {
             background-color: rgb(100, 89, 221);
+        }
+
+        input[type="radio"] {
+            position: absolute !important;
+            clip: rect(0, 0, 0, 0);
+            height: 1px;
+            width: 1px;
+            border: 0;
+            overflow: hidden;
+        }
+
+        input[type="radio"]:checked+label {
+            background-color: rgb(100, 89, 221);
+        }
+
+        .input-group {
+            display: flex;
+        }
+
+        .input-group input,
+        .input-group button {
+            flex-grow: 1;
+        }
+
+        .input-group input:first-child,
+        .input-group label:first-child,
+        .input-group button:first-child {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-right: 0px solid #555;
+        }
+
+        .input-group input:last-child,
+        .input-group label:last-child,
+        .input-group button:last-child {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+
+        .input-group input:not(:first-child):not(:last-child),
+        .input-group label:not(:first-child):not(:last-child),
+        .input-group button:not(:first-child):not(:last-child) {
+            border-radius: 0;
         }
 
         input[type="number"] {
@@ -104,7 +156,73 @@
             top: 10px;
             right: 10px;
         }
+
+        .force-border-radius {
+            border-top-left-radius: 4px !important;
+            border-bottom-left-radius: 4px !important;
+        }
+
+        .nudgeX {
+            animation: nudgeX-animation 0.3s ease-in-out;
+        }
+
+        .nudgeY {
+            animation: nudgeY-animation 0.3s ease-in-out;
+        }
+
+        @keyframes nudgeX-animation {
+            0% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-10px);
+            }
+
+            40% {
+                transform: translateX(10px);
+            }
+
+            60% {
+                transform: translateX(-5px);
+            }
+
+            80% {
+                transform: translateX(5px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes nudgeY-animation {
+            0% {
+                transform: translateY(0);
+            }
+
+            20% {
+                transform: translateY(-10px);
+            }
+
+            40% {
+                transform: translateY(10px);
+            }
+
+            60% {
+                transform: translateY(-5px);
+            }
+
+            80% {
+                transform: translateY(5px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" />
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -112,30 +230,43 @@
 
 <body>
     <div class="language-selector">
-        <span class="label">Language:</span>
+        <span class="label" id="language-label"><span class="mdi mdi-translate"></span> Language:</span>
         <select id="language-dropdown">
             <option value="english">English</option>
             <option value="chinese">中文</option>
         </select>
     </div>
 
-    <h1>SignalRGB WLED Matrix Pixel Art Painter</h1>
+    <h1>SignalRGB Nollie1/WLED Matrix Pixel Art Painter</h1>
 
     <div id="controls">
-        <span class="label">Size:</span>
-        <input id="size-cols" type="number" value="16" min="1" step="1" />
-        <span class="label">x</span>
-        <input id="size-rows" type="number" value="16" min="1" step="1" />
+        <span class="label" id="size-label"><span class="mdi mdi-image-size-select-small"></span> Size:</span>
+        <div class="input-group">
+            <input id="size-cols" type="number" value="16" min="1" step="1" />
+            <input id="size-rows" type="number" value="16" min="1" step="1" />
+        </div>
+        <button id="import-btn" onclick="importData();"><span class="mdi mdi-import"></span> Import Data</button>
+        <button id="export-btn" onclick="exportData();"><span class="mdi mdi-export"></span> Export Data</button>
+        <input type="hidden" id="clipboard" />
+    </div>
 
-        <span class="label">Mode:</span>
-        <select id="draw-mode">
-            <option value="draw">Draw</option>
-            <option value="fill">Fill</option>
-            <option value="clear">Clear</option>
-        </select>
+    <div id="tools">
+        <div class="input-group">
+            <input type="radio" id="draw" name="draw-mode" value="draw" checked>
+            <label for="draw" class="force-border-radius"><span class="mdi mdi-draw"></span> Draw</label>
+            <input type="radio" id="fill" name="draw-mode" value="fill">
+            <label for="fill"><span class="mdi mdi-format-color-fill"></span> Fill</label>
+            <input type="radio" id="clear" name="draw-mode" value="clear">
+            <label for="clear"><span class="mdi mdi-eraser"></span> Clear</label>
+            <button id="clear-btn" onclick="fillAll('#000000');"><span class="mdi mdi-trash-can-outline"></span> Clear
+                All</button>
+        </div>
 
-        <button id="clear-all">Clear All</button>
-        <button id="export-data">Export Data</button>
+        <button id="invert-btn" onclick="invertAll();"><span class="mdi mdi-invert-colors"></span> Invert</button>
+        <button id="horizontal-btn" onclick="mirrorHorizontal();"><span class="mdi mdi-flip-horizontal"></span> Mirror
+            Horizontal</button>
+        <button id="vertical-btn" onclick="mirrorVertical();"><span class="mdi mdi-flip-vertical"></span> Mirror
+            Vertical</button>
     </div>
 
     <div id="canvas-container">
@@ -148,13 +279,98 @@
     </div>
 
     <script>
-        $('#language-dropdown').on('change', function() {
-            switch ($(this).val()) {
+        const langDB = {
+            language: { id: 0, en: '<span class="mdi mdi-translate"></span> Language:', zh: '<span class="mdi mdi-translate"></span> 语言:' },
+            header: { id: 1, en: "SignalRGB WLED/Nollie1 Matrix Pixel Art Painter", zh: "SignalRGB WLED/Nollie1 像素屏画家" },
+            size: { id: 2, en: '<span class="mdi mdi-image-size-select-small"></span> Size:', zh: '<span class="mdi mdi-image-size-select-small"></span> 大小:' },
+            import: { id: 3, en: '<span class="mdi mdi-import"></span> Import Data', zh: '<span class="mdi mdi-import"></span> 导入数据' },
+            export: { id: 4, en: '<span class="mdi mdi-export"></span> Export Data', zh: '<span class="mdi mdi-export"></span> 导出数据' },
+            draw: { id: 5, en: '<span class="mdi mdi-draw"></span> Draw', zh: '<span class="mdi mdi-draw"></span> 绘画模式' },
+            fill: { id: 6, en: '<span class="mdi mdi-format-color-fill"></span> Fill', zh: '<span class="mdi mdi-format-color-fill"></span> 填充模式' },
+            erase: { id: 7, en: '<span class="mdi mdi-eraser"></span> Erase', zh: '<span class="mdi mdi-eraser"></span> 擦除模式' },
+            clear: { id: 8, en: '<span class="mdi mdi-trash-can-outline"></span> Clear All', zh: '<span class="mdi mdi-trash-can-outline"></span> 清楚全部' },
+            invert: { id: 9, en: '<span class="mdi mdi-invert-colors"></span> Invert', zh: '<span class="mdi mdi-invert-colors"></span> 反转' },
+            horizontal: { id: 10, en: '<span class="mdi mdi-flip-horizontal"></span> Mirror Horizontal', zh: '<span class="mdi mdi-flip-horizontal"></span> 水平镜像' },
+            vertical: { id: 11, en: '<span class="mdi mdi-flip-vertical"></span> Mirror Vertical', zh: '<span class="mdi mdi-flip-vertical"></span> 垂直镜像' },
+            position1: { id: 12, en: 'Position: (-1, -1)', zh: '位置: (-1, -1)' },
+            cellsize1: { id: 13, en: 'Cell Size: 0x0', zh: '像元大小: 34x34' },
+            position2: { id: 14, en: 'Position:', zh: '位置:' },
+            cellsize2: { id: 15, en: 'Cell Size:', zh: '像元大小:' },
+            copycode: { id: 16, en: 'Copy the code below into SignalRGB', zh: '将以下代码复制到SignalRGB' },
+            copy: { id: 17, en: 'Copy', zh: '复制' },
+            ok: { id: 18, en: 'OK', zh: '确认' },
+            copied: { id: 19, en: 'Code copied to clipboard.', zh: '代码已复制到剪贴板。' }
+        };
+
+        $(document).ready(function () {
+            let language = localStorage.getItem('language') || 'english';
+            $('body').attr('data-language', language);
+            changeLanguage(language);
+            $('#language-dropdown').val(language);
+        });
+
+        function changeLanguage(lang) {
+            localStorage.setItem('language', lang);
+
+            switch (lang) {
                 case 'chinese':
-                    window.location = './zh';
+                    $('#language-label').html(langDB.language.zh);
+                    $('h1').text(langDB.header.zh);
+                    $('#size-label').html(langDB.size.zh);
+                    $('#import-btn').html(langDB.import.zh);
+                    $('#export-btn').html(langDB.export.zh);
+                    $('label[for="draw"]').html(langDB.draw.zh);
+                    $('label[for="fill"]').html(langDB.fill.zh);
+                    $('label[for="clear"]').html(langDB.erase.zh);
+                    $('#clear-btn').html(langDB.clear.zh);
+                    $('#invert-btn').html(langDB.invert.zh);
+                    $('#horizontal-btn').html(langDB.horizontal.zh);
+                    $('#vertical-btn').html(langDB.vertical.zh);
+                    $('#mouse-pos').text(langDB.position1.zh);
+                    $('#cell-size').text(langDB.cellsize1.zh);
                     break;
                 default:
+                    $('#language-label').html(langDB.language.en);
+                    $('h1').text(langDB.header.en);
+                    $('#size-label').html(langDB.size.en);
+                    $('#import-btn').html(langDB.import.en);
+                    $('#export-btn').html(langDB.export.en);
+                    $('label[for="draw"]').html(langDB.draw.en);
+                    $('label[for="fill"]').html(langDB.fill.en);
+                    $('label[for="clear"]').html(langDB.erase.en);
+                    $('#clear-btn').html(langDB.clear.en);
+                    $('#invert-btn').html(langDB.invert.en);
+                    $('#horizontal-btn').html(langDB.horizontal.en);
+                    $('#vertical-btn').html(langDB.vertical.en);
+                    $('#mouse-pos').text(langDB.position1.en);
+                    $('#cell-size').text(langDB.cellsize1.en);
             }
+        }
+
+        function getCorrectTranslation(langid) {
+            let body = $('body').attr('data-language');
+            switch (body) {
+                case 'chinese':
+                    for (const key in langDB) {
+                        if (langDB[key].id === langid) {
+                            return langDB[key].zh
+                        }
+                    }
+                    break;
+                default:
+                    for (const key in langDB) {
+                        if (langDB[key].id === langid) {
+                            return langDB[key].en
+                        }
+                    }
+            }
+
+            return null;
+        }
+
+        $('#language-dropdown').on('change', function () {
+            changeLanguage($(this).val());
+            $('body').attr('data-language', $(this).val());
         });
 
         $('#size-cols, #size-rows').on('input', function (e) {
@@ -165,14 +381,47 @@
 
             resizeCanvas();
         });
+
+        $('input[name="draw-mode"]').change(function () {
+            currentMode = this.value;
+        });
+
+        async function importData() {
+            var text = null;
+            try {
+                text = await navigator.clipboard.readText()
+                $('#clipboard').val(text);
+            } catch (error) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    theme: "dark",
+                    text: "Failed to read clipboard. Using execCommand instead.",
+                });
+
+                $('#clipboard').focus();
+                $('#clipboard').val('');
+                text = document.execCommand('paste')
+                $('#clipboard').val(text);
+            }
+            try {
+                matrixData = JSON.parse($('#clipboard').val());
+                matrixData = matrixData.map(row => row.map(value => value === 0 ? "#000000" : "#ffffff"));
+                drawMatrix();
+            } catch {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    theme: "dark",
+                    text: "Error parsing JSON data.",
+                });
+            }
+        }
     </script>
 
     <script>
         const canvas = document.getElementById('matrix-canvas');
         const ctx = canvas.getContext('2d');
-        const drawModeSelect = document.getElementById('draw-mode');
-        const clearAllBtn = document.getElementById('clear-all');
-        const exportDataBtn = document.getElementById('export-data');
         const mousePosDisplay = document.getElementById('mouse-pos');
         const cellSizeDisplay = document.getElementById('cell-size');
 
@@ -186,7 +435,7 @@
 
         // Drawing state
         let isDrawing = false;
-        let currentMode = drawModeSelect.value;
+        let currentMode = $('input[name="draw-mode"]:checked').val();
 
         // Resize the canvas to fill the screen while maintaining aspect ratio
         function resizeCanvas() {
@@ -206,7 +455,7 @@
             canvas.width = COLS * cellWidth;
             canvas.height = ROWS * cellHeight;
 
-            cellSizeDisplay.textContent = `Cell Size: ${cellWidth}x${cellHeight}`;
+            cellSizeDisplay.textContent = `${getCorrectTranslation(15)} ${cellWidth}x${cellHeight}`;
 
             // Redraw the matrix with the current data
             drawMatrix();
@@ -277,6 +526,38 @@
             drawMatrix();
         }
 
+        //Invert all cells
+        function invertAll() {
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLS; col++) {
+                    if (matrixData[row][col] == '#ffffff') {
+                        matrixData[row][col] = '#000000';
+                    } else {
+                        matrixData[row][col] = '#ffffff';
+                    }
+                }
+            }
+            drawMatrix();
+        }
+
+        function mirrorHorizontal() {
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLS / 2; col++) {
+                    matrixData[row][COLS - col - 1] = matrixData[row][col];
+                }
+            }
+            drawMatrix();
+        }
+
+        function mirrorVertical() {
+            for (let row = 0; row < ROWS / 2; row++) {
+                for (let col = 0; col < COLS; col++) {
+                    matrixData[ROWS - row - 1][col] = matrixData[row][col];
+                }
+            }
+            drawMatrix();
+        }
+
         function copyToClipboard(text) {
             var $temp = $('<input>');
             $('body').append($temp);
@@ -288,10 +569,70 @@
                 position: "top-end",
                 icon: "success",
                 theme: "dark",
-                title: "Code copied to clipboard.",
+                title: getCorrectTranslation(19),
                 showConfirmButton: false,
                 timer: 1500
             });
+        }
+
+        function moveUp() {
+            for (let row = 0; row < ROWS - 1; row++) {
+                for (let col = 0; col < COLS; col++) {
+                    matrixData[row][col] = matrixData[row + 1][col];
+                    matrixData[row + 1][col] = '#000000';
+                }
+            }
+            drawMatrix();
+            nudgeY();
+        }
+
+        function moveDown() {
+            for (let row = ROWS - 1; row > 0; row--) {
+                for (let col = 0; col < COLS; col++) {
+                    matrixData[row][col] = matrixData[row - 1][col];
+                    matrixData[row - 1][col] = '#000000';
+                }
+            }
+            drawMatrix();
+            nudgeY();
+        }
+
+        function moveLeft() {
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLS - 1; col++) {
+                    matrixData[row][col] = matrixData[row][col + 1];
+                    matrixData[row][col + 1] = '#000000';
+                }
+            }
+            drawMatrix();
+            nudgeX();
+        }
+
+        function moveRight() {
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = COLS - 1; col > 0; col--) {
+                    matrixData[row][col] = matrixData[row][col - 1];
+                    matrixData[row][col - 1] = '#000000';
+                }
+            }
+            drawMatrix();
+            nudgeX();
+        }
+
+        function nudgeX() {
+            $('#canvas-container').addClass('nudgeX');
+
+            setTimeout(() => {
+                $('#canvas-container').removeClass('nudgeX');
+            }, 700);
+        }
+
+        function nudgeY() {
+            $('#canvas-container').addClass('nudgeY');
+
+            setTimeout(() => {
+                $('#canvas-container').removeClass('nudgeY');
+            }, 700);
         }
 
         // Export matrix data as JSON
@@ -299,14 +640,14 @@
             const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0');
 
             Swal.fire({
-                title: "Copy the code below into SignalRGB",
+                title: getCorrectTranslation(16),
                 icon: "success",
                 theme: "dark",
-                html: `<div class="code-container"><code>${dataStr}</code><button class="copy-code" onclick="copyToClipboard(${dataStr});">Copy</button></div>`,
+                html: `<div class="code-container"><code>${dataStr}</code><button class="copy-code" onclick="copyToClipboard(${dataStr});">${getCorrectTranslation(17)}</button></div>`,
                 showCloseButton: false,
                 showCancelButton: false,
                 focusConfirm: false,
-                confirmButtonText: `OK`,
+                confirmButtonText: getCorrectTranslation(18),
                 confirmButtonAriaLabel: 'OK',
                 cancelButtonText: 'Cancel',
                 cancelButtonAriaLabel: "Thumbs down"
@@ -335,7 +676,8 @@
         canvas.addEventListener('mousemove', (e) => {
             const coords = getMatrixCoords(e);
             if (coords) {
-                mousePosDisplay.textContent = `Position: (${coords.col}, ${coords.row})`;
+
+                mousePosDisplay.textContent = `${getCorrectTranslation(14)} (${coords.col}, ${coords.row})`;
 
                 if (isDrawing) {
                     switch (currentMode) {
@@ -348,34 +690,42 @@
                     }
                 }
             } else {
-                mousePosDisplay.textContent = 'Position: (-1, -1)';
+                mousePosDisplay.textContent = getCorrectTranslation(12);
             }
         });
 
         canvas.addEventListener('mouseout', () => {
-            mousePosDisplay.textContent = 'Position: (-1, -1)';
+            mousePosDisplay.textContent = getCorrectTranslation(12);
         });
 
         window.addEventListener('mouseup', () => {
             isDrawing = false;
         });
 
-        drawModeSelect.addEventListener('change', () => {
-            currentMode = drawModeSelect.value;
-        });
-
-        clearAllBtn.addEventListener('click', () => {
-            fillAll('#000000');
-        });
-
-        exportDataBtn.addEventListener('click', () => {
-            exportData();
-        });
-
         window.addEventListener('resize', resizeCanvas);
 
         // Initial setup
         resizeCanvas();
+
+        $(document).keydown(function (e) {
+            switch (e.which) {
+                case 37: // left arrow key
+                    moveLeft();
+                    break;
+                case 38: // up arrow key
+                    moveUp();
+                    break;
+                case 39: // right arrow key
+                    moveRight();
+                    break;
+                case 40: // down arrow key
+                    moveDown();
+                    break;
+                default: return; // exit this handler for other keys
+            }
+
+            e.preventDefault(); // prevent the default action (scroll / move caret)
+        });
     </script>
 </body>
 
