@@ -583,7 +583,8 @@
                 matrixData = JSON.parse($('#clipboard').val());
                 matrixData = matrixData.map(row => row.map(value => value === 0 ? "#000000" : "#ffffff"));
                 drawMatrix();
-            } catch {
+            } catch(e) {
+                console.log(e);
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
@@ -601,10 +602,25 @@
 
         function loadPixelArt() {
             try {
-                matrixData = JSON.parse($('#select-load').val());
+                var $select = $('#select-load option:selected');
+
+                console.log($select.data('size')[0]);
+                console.log($select.data('size')[1]);
+
+                COLS = parseInt($select.data('size')[0]);
+                ROWS = parseInt($select.data('size')[1]);
+
+                matrixData = Array(ROWS).fill().map(() => Array(COLS).fill('#000000'));
+                resizeCanvas();
+
+                matrixData = JSON.parse($select.val());
                 matrixData = matrixData.map(row => row.map(value => value === 0 ? "#000000" : "#ffffff"));
                 drawMatrix();
-            } catch {
+
+                $('#size-cols').val(COLS);
+                $('#size-rows').val(ROWS);
+            } catch(e) {
+                console.log(e);
                 Swal.fire({
                     icon: "error",
                     title: "Oops...",
@@ -637,7 +653,7 @@
             $('#select-load').find('option').remove().end().append($('<option></option>').val('null').prop('disabled', true).prop('selected', true).html(getCorrectTranslation('pleaseselect')));
             var values = stringifyLocalStorageExcept(['language']);
             $.each(values, function (key, item) {
-                $('#select-load').append($(`<option data-size="${item.size}" data-group="${item.size[0]}x${item.size[1]}" value="${item.data}">${item.name}</option>`).val(item.data).html(item.name));
+                $('#select-load').append($(`<option data-size="[${item.size}]" data-group="${item.size[0]}x${item.size[1]}" value="${item.data}">${item.name}</option>`).val(item.data).html(item.name));
             });
 
             var optiongroups = {};
