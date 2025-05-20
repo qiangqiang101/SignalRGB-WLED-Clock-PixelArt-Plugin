@@ -281,8 +281,8 @@
             language: { id: 0, en: '<span class="mdi mdi-translate"></span> Language:', zh: '<span class="mdi mdi-translate"></span> 语言:' },
             header: { id: 1, en: "SignalRGB WLED/Nollie1 Matrix Pixel Art Painter", zh: "SignalRGB WLED/Nollie1 像素屏画家" },
             size: { id: 2, en: '<span class="mdi mdi-image-size-select-small"></span> Size:', zh: '<span class="mdi mdi-image-size-select-small"></span> 大小:' },
-            import: { id: 3, en: '<span class="mdi mdi-import"></span> Import Data', zh: '<span class="mdi mdi-import"></span> 导入数据' },
-            export: { id: 4, en: '<span class="mdi mdi-export"></span> Export Data', zh: '<span class="mdi mdi-export"></span> 导出数据' },
+            import: { id: 3, en: '<span class="mdi mdi-import"></span> Import Drawing', zh: '<span class="mdi mdi-import"></span> 导入数据' },
+            export: { id: 4, en: '<span class="mdi mdi-export"></span> Export Drawing', zh: '<span class="mdi mdi-export"></span> 导出数据' },
             draw: { id: 5, en: '<span class="mdi mdi-draw"></span> Draw', zh: '<span class="mdi mdi-draw"></span> 绘画模式' },
             fill: { id: 6, en: '<span class="mdi mdi-format-color-fill"></span> Fill', zh: '<span class="mdi mdi-format-color-fill"></span> 填充模式' },
             erase: { id: 7, en: '<span class="mdi mdi-eraser"></span> Erase', zh: '<span class="mdi mdi-eraser"></span> 擦除模式' },
@@ -701,7 +701,6 @@
             const { value: cookieName } = await Swal.fire({
                 title: "Drawing name",
                 input: "text",
-                inputLabel: "Drawing name",
                 showCancelButton: true,
                 inputValidator: (value) => {
                     if (!value) {
