@@ -137,4 +137,4 @@ Another example: SignalRGB icon on my 16x16 Matrix
 ]
 ```
 
-I made a simple html page to create pixel art: [https://pixelart.imnotmental.com/](https://pixelart.imnotmental.com/)
+I made a simple html page to create pixel art: [https://pixelart.nolliergb.com/](https://pixelart.nolliergb.com/)
