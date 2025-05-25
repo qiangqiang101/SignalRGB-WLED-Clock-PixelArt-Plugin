@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 
@@ -100,12 +99,14 @@
                 <div class="col-auto">
                     <div class="btn-group">
                         <input type="radio" class="btn-check" id="draw" name="draw-mode" value="draw" checked>
-                        <label for="draw" class="btn btn-primary"><span class="mdi mdi-draw"></span> Draw</label>
-                        <input type="radio" class="btn-check" id="grey" name="draw-mode" value="grey">
-                        <label for="grey" class="btn btn-primary"><span class="mdi mdi-draw"></span> Grey</label>
+                        <label for="draw" class="btn btn-primary"><span class="mdi mdi-draw"></span> Draw</label></input>
+                        <input type="radio" class="btn-check" id="lightGrey" name="draw-mode" value="lightGrey">
+                        <label for="lightGrey" class="btn btn-primary"><span class="mdi mdi-draw"></span> Light Grey</label></input>
+                        <input type="radio" class="btn-check" id="darkGrey" name="draw-mode" value="darkGrey">
+                        <label for="darkGrey" class="btn btn-primary"><span class="mdi mdi-draw"></span> Dark Grey</label></input>
                         <input type="radio" class="btn-check" id="fill" name="draw-mode" value="fill">
                         <label for="fill" class="btn btn-primary"><span class="mdi mdi-format-color-fill"></span>
-                            Fill</label>
+                            Fill</label></input>
                         <input type="radio" class="btn-check" id="clear" name="draw-mode" value="clear">
                         <label for="clear" class="btn btn-primary"><span class="mdi mdi-eraser"></span> Clear</label>
                         <button class="btn btn-primary" id="clear-btn" onclick="fillAll('#000000');"><span
@@ -118,6 +119,9 @@
                     <button id="invert-btn" class="btn btn-primary" onclick="invertAll();"><span
                             class="mdi mdi-invert-colors"></span>
                         Invert</button>
+                    <button id="invertGreys-btn" class="btn btn-primary" onclick="invertGreys();"><span
+                            class="mdi mdi-invert-colors"></span>
+                        Invert Greys</button>
                     <button id="horizontal-btn" class="btn btn-primary" onclick="mirrorHorizontal();"><span
                             class="mdi mdi-flip-horizontal"></span>
                         Mirror
@@ -159,7 +163,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" id="save-confirm-btn"
-                        onclick="savePixelArt();">Submit</button>
+                        >Submit</button>
                 </div>
             </div>
         </div>
@@ -355,11 +359,13 @@
             import: { en: '<span class="mdi mdi-import"></span> Import', zh: '<span class="mdi mdi-import"></span> 导入' },
             export: { en: '<span class="mdi mdi-export"></span> Export', zh: '<span class="mdi mdi-export"></span> 导出' },
             draw: { en: '<span class="mdi mdi-draw"></span> Draw', zh: '<span class="mdi mdi-draw"></span> 绘画模式' },
-            grey: { en: '<span class="mdi mdi-grey"></span> Grey', zh: '<span class="mdi mdi-draw"></span> 灰色' },
+            lightGrey: { en: '<span class="mdi mdi-grey"></span> Light Grey', zh: '<span class="mdi mdi-draw"></span> 浅灰色' },
+            darkGrey: { en: '<span class="mdi mdi-grey"></span> Dark Grey', zh: '<span class="mdi mdi-draw"></span> 深灰色' },
             fill: { en: '<span class="mdi mdi-format-color-fill"></span> Fill', zh: '<span class="mdi mdi-format-color-fill"></span> 填充模式' },
             erase: { en: '<span class="mdi mdi-eraser"></span> Erase', zh: '<span class="mdi mdi-eraser"></span> 擦除模式' },
             clear: { en: '<span class="mdi mdi-trash-can-outline"></span> Clear All', zh: '<span class="mdi mdi-trash-can-outline"></span> 清除全部' },
             invert: { en: '<span class="mdi mdi-invert-colors"></span> Invert', zh: '<span class="mdi mdi-invert-colors"></span> 反转' },
+            invertGreys: { en: '<span class="mdi mdi-invert-colors"></span> Invert Greys', zh: '<span class="mdi mdi-invert-colors"></span> 反转灰色' },
             horizontal: { en: '<span class="mdi mdi-flip-horizontal"></span> Mirror Horizontal', zh: '<span class="mdi mdi-flip-horizontal"></span> 水平镜像' },
             vertical: { en: '<span class="mdi mdi-flip-vertical"></span> Mirror Vertical', zh: '<span class="mdi mdi-flip-vertical"></span> 垂直镜像' },
             position1: { en: 'Position: (-1, -1)', zh: '位置: (-1, -1)' },
@@ -427,11 +433,13 @@
                     $('#load-btn').html(langDB.load.zh);
                     $('#save-btn').html(langDB.save.zh);
                     $('label[for="draw"]').html(langDB.draw.zh);
-                    $('label[for="grey"]').html(langDB.grey.zh);
+                    $('label[for="lightGrey"]').html(langDB.lightGrey.zh);
+                    $('label[for="darkGrey"]').html(langDB.darkGrey.zh);
                     $('label[for="fill"]').html(langDB.fill.zh);
                     $('label[for="clear"]').html(langDB.erase.zh);
                     $('#clear-btn').html(langDB.clear.zh);
                     $('#invert-btn').html(langDB.invert.zh);
+                    $('#invertGreys-btn').html(langDB.invertGreys.zh);
                     $('#horizontal-btn').html(langDB.horizontal.zh);
                     $('#vertical-btn').html(langDB.vertical.zh);
                     $('#mouse-pos').text(langDB.position1.zh);
@@ -469,11 +477,13 @@
                     $('#load-btn').html(langDB.load.en);
                     $('#save-btn').html(langDB.save.en);
                     $('label[for="draw"]').html(langDB.draw.en);
-                    $('label[for="grey"]').html(langDB.grey.en);
+                    $('label[for="lightGrey"]').html(langDB.lightGrey.en);
+                    $('label[for="darkGrey"]').html(langDB.darkGrey.en);
                     $('label[for="fill"]').html(langDB.fill.en);
                     $('label[for="clear"]').html(langDB.erase.en);
                     $('#clear-btn').html(langDB.clear.en);
                     $('#invert-btn').html(langDB.invert.en);
+                    $('#invertGreys-btn').html(langDB.invertGreys.en);
                     $('#horizontal-btn').html(langDB.horizontal.en);
                     $('#vertical-btn').html(langDB.vertical.en);
                     $('#mouse-pos').text(langDB.position1.en);
@@ -550,7 +560,13 @@
             }
             try {
                 matrixData = JSON.parse($('#clipboard').val());
-                matrixData = matrixData.map(row => row.map(value => value === 0 ? "#000000" : "#ffffff"));
+                const colorMap = {
+                  0: "#000000", // black
+                  0.3: "#505050", // dark grey
+                  0.5: "#999999", // light grey
+                };
+                const defaultColor = "#ffffff";
+                matrixData = matrixData.map(row => row.map(value => colorMap[value] || defaultColor));
                 drawMatrix();
             } catch (e) {
                 console.log(e);
@@ -590,8 +606,18 @@
                     resizeCanvas();
 
                     matrixData = JSON.parse($select.val());
-                    matrixData = matrixData.map(row => row.map(value => value === 0 ? "#000000" : "#ffffff"));
-                    drawMatrix();
+                    const colorMap = new Map([
+                        [0, "#000000"],
+                        [0.3, "#505050"],
+                        [0.5, "#999999"]
+                    ]);
+
+                    const defaultColor = "#ffffff";
+
+                    matrixData = matrixData.map(row =>
+                        row.map(value => colorMap.get(value) || defaultColor)
+                    );
+                    console.log(matrixData)
 
                     $('#size-cols').val(COLS);
                     $('#size-rows').val(ROWS);
@@ -608,14 +634,14 @@
                     });
                 }
             }
-
+            drawMatrix()
         });
 
         $('#save-confirm-btn').click(function (evt) {
             if (!$('#txt-save').val()) {
                 $('#txt-save').addClass('is-invalid');
             } else {
-                const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0');
+                const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#999999"', '0.5').replaceAll('"#505050"', '0.3');
                 const name = $('#txt-save').val();
                 const obj = { name: name, size: [parseInt($('#size-cols').val()), parseInt($('#size-rows').val())], data: dataStr };
                 localStorage.setItem(`item-${name}`, JSON.stringify(obj));
@@ -867,7 +893,7 @@
             } else if (!$('#txt-share-name').val()) {
                 $('#txt-share-name').addClass('is-invalid');
             } else {
-                const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0');
+                const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#999999"', '0.3').replaceAll('"#505050"', '0.5');
                 var json = {
                     author: $('#txt-share-author').val(),
                     name: $('#txt-share-name').val(),
@@ -1133,17 +1159,33 @@
 
         //Invert all cells
         function invertAll() {
+            console.log("Im in")
             for (let row = 0; row < ROWS; row++) {
                 for (let col = 0; col < COLS; col++) {
                     if (matrixData[row][col] == '#ffffff') {
                         matrixData[row][col] = '#000000';
-                    } else {
+                    } else if (matrixData[row][col] == '#000000') {
                         matrixData[row][col] = '#ffffff';
                     }
                 }
             }
             drawMatrix();
         }
+        
+        function invertGreys() {
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLS; col++) {
+                    if (matrixData[row][col] == '#999999') {
+                        matrixData[row][col] = '#505050';
+                    } else if (matrixData[row][col] == '#505050') {
+                        matrixData[row][col] = '#999999';
+                    }
+                }
+            }
+            drawMatrix();
+        }
+        
+        
 
         function mirrorHorizontal() {
             for (let row = 0; row < ROWS; row++) {
@@ -1243,7 +1285,7 @@
 
         // Export matrix data as JSON
         function exportData() {
-            const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#808080"', '0.5');
+            const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#999999"', '0.3').replaceAll('"#505050"', '0.5');
 
             swalBS.fire({
                 title: getCorrectTranslation('copycode'),
@@ -1269,8 +1311,11 @@
                     case 'draw':
                         updateCell(coords.row, coords.col, '#ffffff');
                         break;
-                    case 'grey':
-                        updateCell(coords.row, coords.col, '#808080');
+                    case 'darkGrey':
+                        updateCell(coords.row, coords.col, '#505050');
+                        break;
+                    case 'lightGrey':
+                        updateCell(coords.row, coords.col, '#999999');
                         break;
                     case 'fill':
                         fillAll('#ffffff');
@@ -1293,8 +1338,11 @@
                         case 'draw':
                             updateCell(coords.row, coords.col, '#ffffff');
                             break;
-                        case 'grey':
-                            updateCell(coords.row, coords.col, '#808080');
+                        case 'darkGrey':
+                            updateCell(coords.row, coords.col, '#505050');
+                            break;
+                        case 'lightGrey':
+                            updateCell(coords.row, coords.col, '#999999');
                             break;
                         case 'clear':
                             updateCell(coords.row, coords.col, '#000000');
