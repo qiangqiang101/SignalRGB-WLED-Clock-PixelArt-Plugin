@@ -2399,27 +2399,6 @@ function displayClock()
 	}
 }
 
-
-function adjustBrightness(hex, factor) {
-  hex = hex.replace(/^#/, '');
-
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-
-  const newR = Math.min(255, Math.max(0, Math.round(r * factor)));
-  const newG = Math.min(255, Math.max(0, Math.round(g * factor)));
-  const newB = Math.min(255, Math.max(0, Math.round(b * factor)));
-
-  const toHex = (c) => {
-    const hexValue = c.toString(16);
-    return hexValue.length === 1 ? "0" + hexValue : hexValue;
-  };
-
-  const newHex = `#${toHex(newR)}${toHex(newG)}${toHex(newB)}`;
-  return newHex;
-}
-
 function multiplyArrays(arr1, arr2) {
   if (arr1.length !== arr2.length) {
     throw new Error("Arrays must have the same length");
