@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
 
@@ -88,8 +89,7 @@
                     <button class="btn btn-primary" id="share-btn" type="button" data-bs-toggle="modal"
                         data-bs-target="#modal-share"><span class="mdi mdi-share-variant-outline"></span> Share</button>
                     <button class="btn btn-primary" id="community-btn" type="button" data-bs-toggle="offcanvas"
-                        data-bs-target="#community" aria-controls="community"
-                        onclick="getCommunityItems(); getFavoritesCommunityItems();">
+                        data-bs-target="#community" aria-controls="community" onclick="getCommunityItems();">
                         <span class="mdi mdi-account-group-outline"></span> Community Pixel Art
                     </button>
                 </div>
@@ -99,36 +99,29 @@
                 <div class="col-auto">
                     <div class="btn-group">
                         <input type="radio" class="btn-check" id="draw" name="draw-mode" value="draw" checked>
-                        <label for="draw" class="btn btn-primary"><span class="mdi mdi-draw"></span> Draw</label></input>
-                        <input type="radio" class="btn-check" id="lightGrey" name="draw-mode" value="lightGrey">
-                        <label for="lightGrey" class="btn btn-primary"><span class="mdi mdi-draw"></span> Light Grey</label></input>
-                        <input type="radio" class="btn-check" id="darkGrey" name="draw-mode" value="darkGrey">
-                        <label for="darkGrey" class="btn btn-primary"><span class="mdi mdi-draw"></span> Dark Grey</label></input>
+                        <label for="draw" class="btn btn-primary"><span class="mdi mdi-draw"></span> Draw</label>
                         <input type="radio" class="btn-check" id="fill" name="draw-mode" value="fill">
-                        <label for="fill" class="btn btn-primary"><span class="mdi mdi-format-color-fill"></span>
-                            Fill</label></input>
-                        <input type="radio" class="btn-check" id="clear" name="draw-mode" value="clear">
-                        <label for="clear" class="btn btn-primary"><span class="mdi mdi-eraser"></span> Clear</label>
-                        <button class="btn btn-primary" id="clear-btn" onclick="fillAll('#000000');"><span
-                                class="mdi mdi-trash-can-outline"></span>
-                            Clear
-                            All</button>
+                        <label for="fill" class="btn btn-primary"><span class="mdi mdi-format-color-fill"></span> Fill</label>
+                        <button class="btn btn-primary" id="clear-btn" onclick="clearAll('#000000');"><span class="mdi mdi-trash-can-outline"></span> Clear All</button>
                     </div>
                 </div>
                 <div class="col-auto">
-                    <button id="invert-btn" class="btn btn-primary" onclick="invertAll();"><span
-                            class="mdi mdi-invert-colors"></span>
-                        Invert</button>
-                    <button id="invertGreys-btn" class="btn btn-primary" onclick="invertGreys();"><span
-                            class="mdi mdi-invert-colors"></span>
-                        Invert Greys</button>
-                    <button id="horizontal-btn" class="btn btn-primary" onclick="mirrorHorizontal();"><span
-                            class="mdi mdi-flip-horizontal"></span>
-                        Mirror
-                        Horizontal</button>
-                    <button id="vertical-btn" class="btn btn-primary" onclick="mirrorVertical();"><span
-                            class="mdi mdi-flip-vertical"></span> Mirror
-                        Vertical</button>
+                    <div class="btn-group">
+                        <input type="radio" class="btn-check" id="draw-full" name="draw-color" value="1" checked>
+                        <label for="draw-full" class="btn btn-primary"><span class="mdi mdi-water"></span> White</label>
+                        <input type="radio" class="btn-check" id="draw-transparent" name="draw-color" value="0.5">
+                        <label for="draw-transparent" class="btn btn-primary"><span class="mdi mdi-water-opacity"></span> Grey</label>
+                        <input type="radio" class="btn-check" id="draw-black" name="draw-color" value="0">
+                        <label for="draw-black" class="btn btn-primary"><span class="mdi mdi-water-opacity"></span> Black</label>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <button id="invert-btn" class="btn btn-primary" onclick="invertAll();"><span class="mdi mdi-invert-colors"></span> Invert</button>
+                    <button id="horizontal-btn" class="btn btn-primary" onclick="mirrorHorizontal();"><span class="mdi mdi-flip-horizontal"></span> Mirror Horizontal</button>
+                    <button id="vertical-btn" class="btn btn-primary" onclick="mirrorVertical();"><span class="mdi mdi-flip-vertical"></span> Mirror Vertical</button>
+                </div>
+                <div class="col-auto">
+                    <button id="invert-btn" class="btn btn-primary" onclick="showHelp();"><span class="mdi mdi-invert-colors"></span> Help</button>
                 </div>
             </div>
         </section>
@@ -162,8 +155,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="save-confirm-btn"
-                        >Submit</button>
+                    <button type="button" class="btn btn-primary" id="save-confirm-btn">Submit</button>
                 </div>
             </div>
         </div>
@@ -258,8 +250,8 @@
                             <label for="txtInfoData" class="form-label">Code</label>
                             <div class="input-group">
                                 <textarea id="txtInfoData" class="form-control" rows="6" disabled></textarea>
-                                <button class="btn btn-outline-secondary" type="button"
-                                    id="btnInfoDataCopy" onclick="copyToClipboard('');">Copy</button>
+                                <button class="btn btn-outline-secondary" type="button" id="btnInfoDataCopy"
+                                    onclick="copyToClipboard('');">Copy</button>
                             </div>
                         </div>
                     </div>
@@ -287,7 +279,7 @@
 
                 <li class="nav-item">
                     <button class="nav-link" id="favorites-items-tab" data-bs-toggle="tab"
-                        data-bs-target="#favorite-items">Favorites</button>
+                        data-bs-target="#favorite-items" onclick="getFavoritesCommunityItems();">Favorites</button>
                 </li>
             </ul>
 
@@ -310,7 +302,7 @@
                         <div class="col-auto float-end">
                             <div class="input-group">
                                 <input class="form-control form-control-sm" type="search" id="txt-search"
-                                    placeholder="Search" aria-label="Search" autocomplete="off" />
+                                    placeholder="Search" aria-label="Search" autocomplete="off" autocapitalize="none" />
                                 <button class="btn btn-outline-secondary btn-sm" type="button"
                                     id="community-search"><span class="mdi mdi-magnify"></span></button>
                             </div>
@@ -359,13 +351,10 @@
             import: { en: '<span class="mdi mdi-import"></span> Import', zh: '<span class="mdi mdi-import"></span> 导入' },
             export: { en: '<span class="mdi mdi-export"></span> Export', zh: '<span class="mdi mdi-export"></span> 导出' },
             draw: { en: '<span class="mdi mdi-draw"></span> Draw', zh: '<span class="mdi mdi-draw"></span> 绘画模式' },
-            lightGrey: { en: '<span class="mdi mdi-grey"></span> Light Grey', zh: '<span class="mdi mdi-draw"></span> 浅灰色' },
-            darkGrey: { en: '<span class="mdi mdi-grey"></span> Dark Grey', zh: '<span class="mdi mdi-draw"></span> 深灰色' },
             fill: { en: '<span class="mdi mdi-format-color-fill"></span> Fill', zh: '<span class="mdi mdi-format-color-fill"></span> 填充模式' },
             erase: { en: '<span class="mdi mdi-eraser"></span> Erase', zh: '<span class="mdi mdi-eraser"></span> 擦除模式' },
             clear: { en: '<span class="mdi mdi-trash-can-outline"></span> Clear All', zh: '<span class="mdi mdi-trash-can-outline"></span> 清除全部' },
             invert: { en: '<span class="mdi mdi-invert-colors"></span> Invert', zh: '<span class="mdi mdi-invert-colors"></span> 反转' },
-            invertGreys: { en: '<span class="mdi mdi-invert-colors"></span> Invert Greys', zh: '<span class="mdi mdi-invert-colors"></span> 反转灰色' },
             horizontal: { en: '<span class="mdi mdi-flip-horizontal"></span> Mirror Horizontal', zh: '<span class="mdi mdi-flip-horizontal"></span> 水平镜像' },
             vertical: { en: '<span class="mdi mdi-flip-vertical"></span> Mirror Vertical', zh: '<span class="mdi mdi-flip-vertical"></span> 垂直镜像' },
             position1: { en: 'Position: (-1, -1)', zh: '位置: (-1, -1)' },
@@ -404,7 +393,10 @@
             infoAuthor: { en: 'Author', zh: '作者' },
             infoCreated: { en: 'Created', zh: '提交时间' },
             infoSize: { en: 'Size', zh: '大小' },
-            infoCode: { en: 'Code', zh: '代码' }
+            infoCode: { en: 'Code', zh: '代码' },
+            colorFull: { en: '<span class="mdi mdi-water"></span> White', zh: '<span class="mdi mdi-water"></span> 全色' },
+            colorTransparent: { en: '<span class="mdi mdi-water-opacity"></span> Grey', zh: '<span class="mdi mdi-water-opacity"></span> 透明' },
+            colorBlack: { en: '<span class="mdi mdi-water-opacity"></span> Black', zh: '<span class="mdi mdi-water-opacity"></span> 黑色的' }
         };
 
         var favorites = [];
@@ -433,13 +425,10 @@
                     $('#load-btn').html(langDB.load.zh);
                     $('#save-btn').html(langDB.save.zh);
                     $('label[for="draw"]').html(langDB.draw.zh);
-                    $('label[for="lightGrey"]').html(langDB.lightGrey.zh);
-                    $('label[for="darkGrey"]').html(langDB.darkGrey.zh);
                     $('label[for="fill"]').html(langDB.fill.zh);
                     $('label[for="clear"]').html(langDB.erase.zh);
                     $('#clear-btn').html(langDB.clear.zh);
                     $('#invert-btn').html(langDB.invert.zh);
-                    $('#invertGreys-btn').html(langDB.invertGreys.zh);
                     $('#horizontal-btn').html(langDB.horizontal.zh);
                     $('#vertical-btn').html(langDB.vertical.zh);
                     $('#mouse-pos').text(langDB.position1.zh);
@@ -466,6 +455,9 @@
                     $('label[for="txtInfoSize"]').text(langDB.infoSize.zh);
                     $('label[for="txtInfoData"]').text(langDB.infoCode.zh);
                     $('#btnInfoDataCopy').text(langDB.copy.zh);
+                    $('label[for="draw-full"]').html(langDB.colorFull.zh);
+                    $('label[for="draw-transparent"]').html(langDB.colorTransparent.zh);
+                    $('label[for="draw-black"]').html(langDB.colorBlack.zh);
                     break;
                 default:
                     $('#ddLanguage').html(langDB.language.en);
@@ -477,13 +469,10 @@
                     $('#load-btn').html(langDB.load.en);
                     $('#save-btn').html(langDB.save.en);
                     $('label[for="draw"]').html(langDB.draw.en);
-                    $('label[for="lightGrey"]').html(langDB.lightGrey.en);
-                    $('label[for="darkGrey"]').html(langDB.darkGrey.en);
                     $('label[for="fill"]').html(langDB.fill.en);
                     $('label[for="clear"]').html(langDB.erase.en);
                     $('#clear-btn').html(langDB.clear.en);
                     $('#invert-btn').html(langDB.invert.en);
-                    $('#invertGreys-btn').html(langDB.invertGreys.en);
                     $('#horizontal-btn').html(langDB.horizontal.en);
                     $('#vertical-btn').html(langDB.vertical.en);
                     $('#mouse-pos').text(langDB.position1.en);
@@ -510,6 +499,9 @@
                     $('label[for="txtInfoSize"]').text(langDB.infoSize.en);
                     $('label[for="txtInfoData"]').text(langDB.infoCode.en);
                     $('#btnInfoDataCopy').text(langDB.copy.en);
+                    $('label[for="draw-full"]').html(langDB.colorFull.en);
+                    $('label[for="draw-transparent"]').html(langDB.colorTransparent.en);
+                    $('label[for="draw-black"]').html(langDB.colorBlack.en);
             }
 
             $('body').attr('data-language', lang);
@@ -540,6 +532,10 @@
             currentMode = this.value;
         });
 
+        $('input[name="draw-color"]').change(function () {
+            currentColor = parseFloat(this.value);
+        })
+
         async function importData() {
             var text = null;
             try {
@@ -560,13 +556,7 @@
             }
             try {
                 matrixData = JSON.parse($('#clipboard').val());
-                const colorMap = {
-                  0: "#000000", // black
-                  0.3: "#505050", // dark grey
-                  0.5: "#999999", // light grey
-                };
-                const defaultColor = "#ffffff";
-                matrixData = matrixData.map(row => row.map(value => colorMap[value] || defaultColor));
+                matrixData = matrixData.map(row => row.map(value => (value === 0) ? "#000000" : (value === 1) ? "#ffffff" : "#505050"));
                 drawMatrix();
             } catch (e) {
                 console.log(e);
@@ -606,18 +596,8 @@
                     resizeCanvas();
 
                     matrixData = JSON.parse($select.val());
-                    const colorMap = new Map([
-                        [0, "#000000"],
-                        [0.3, "#505050"],
-                        [0.5, "#999999"]
-                    ]);
-
-                    const defaultColor = "#ffffff";
-
-                    matrixData = matrixData.map(row =>
-                        row.map(value => colorMap.get(value) || defaultColor)
-                    );
-                    console.log(matrixData)
+                    matrixData = matrixData.map(row => row.map(value => (value === 0) ? "#000000" : (value === 1) ? "#ffffff" : "#505050"));
+                    drawMatrix();
 
                     $('#size-cols').val(COLS);
                     $('#size-rows').val(ROWS);
@@ -634,14 +614,14 @@
                     });
                 }
             }
-            drawMatrix()
+
         });
 
         $('#save-confirm-btn').click(function (evt) {
             if (!$('#txt-save').val()) {
                 $('#txt-save').addClass('is-invalid');
             } else {
-                const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#999999"', '0.5').replaceAll('"#505050"', '0.3');
+                const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#505050"', '0.5');
                 const name = $('#txt-save').val();
                 const obj = { name: name, size: [parseInt($('#size-cols').val()), parseInt($('#size-rows').val())], data: dataStr };
                 localStorage.setItem(`item-${name}`, JSON.stringify(obj));
@@ -694,7 +674,39 @@
             }
             return filtered;
         }
+
+        function appendPlaceholders(count) {
+            var placeholder = `<div class="col-sm-6 col-md-4 col-lg-2 mb-4 d-flex">
+                                    <div class="card" aria-hidden="true">
+                                        <svg class="bd-placeholder-img card-img-top" width="100%" height="180"
+                                            xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder"
+                                            preserveAspectRatio="xMidYMid slice" focusable="false">
+                                            <title>Placeholder</title>
+                                            <rect width="100%" height="100%" fill="#868e96"></rect>
+                                        </svg>
+                                        <div class="card-body">
+                                            <p class="card-text placeholder-glow">
+                                                <span class="placeholder col-7"></span>
+                                                <span class="placeholder col-4"></span>
+                                            </p>
+                                            <div class="btn-group col-6" role="group">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-primary disabled placeholder col-3"></button>
+                                                <button type="button"
+                                                    class="btn btn-sm btn-secondary disabled placeholder col-3"></button>
+                                                <button type="button"
+                                                    class="btn btn-sm btn-danger disabled placeholder col-3"></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`;
+            var duplicate = placeholder.repeat(count);
+            return duplicate;
+        }
+
         function searchCommunityItems(search_string, page = 0) {
+            if (page === 0) $('#community-search-container').empty().append(appendPlaceholders(Math.random() * 30));
+
             $.ajax({
                 url: `${api}search/${search_string}/${page}`,
                 type: 'GET',
@@ -762,7 +774,21 @@
             }
         });
 
+        $('#txt-search').on('input', function (evt) {
+            // Store the current selection range
+            var start = this.selectionStart;
+            var end = this.selectionEnd;
+
+            // Convert text to lowercase
+            $(this).val($(this).val().toLowerCase());
+
+            // Restore the selection range
+            this.setSelectionRange(start, end);
+        });
+
         function getCommunityItems(page = 0) {
+            if (page === 0) $('#community-container').empty().append(appendPlaceholders(Math.random() * 30));
+            
             $.ajax({
                 url: `${api}allitems/${page}`,
                 type: 'GET',
@@ -822,6 +848,8 @@
         }
 
         function getFavoritesCommunityItems(page = 0) {
+            if (page === 0) $('#community-favorites-container').empty().append(appendPlaceholders(Math.random() * 30));
+
             $.ajax({
                 url: `${api}items/${JSON.stringify(favorites)}/${page}`,
                 type: 'GET',
@@ -831,7 +859,6 @@
                     if (response.success === true && response.pagination.total >= 1) {
                         if (page === 0) $('#community-favorites-container').empty();
                         var children = [];
-                        console.log(response)
 
                         $.each(response.data, function (key, item) {
                             let isFavorite = favorites.includes(item.id);
@@ -893,7 +920,7 @@
             } else if (!$('#txt-share-name').val()) {
                 $('#txt-share-name').addClass('is-invalid');
             } else {
-                const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#999999"', '0.3').replaceAll('"#505050"', '0.5');
+                const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#505050"', '0.5');
                 var json = {
                     author: $('#txt-share-author').val(),
                     name: $('#txt-share-name').val(),
@@ -965,7 +992,7 @@
                         resizeCanvas();
 
                         matrixData = JSON.parse($item.data);
-                        matrixData = matrixData.map(row => row.map(value => value === 0 ? "#000000" : "#ffffff"));
+                        matrixData = matrixData.map(row => row.map(value => (value === 0) ? "#000000" : (value === 1) ? "#ffffff" : "#505050"));
                         drawMatrix();
 
                         $('#size-cols').val(COLS);
@@ -1067,6 +1094,7 @@
         // Drawing state
         let isDrawing = false;
         let currentMode = $('input[name="draw-mode"]:checked').val();
+        let currentColor = parseFloat($('#input[name="draw-color"]:checked').val()) || 1;
 
         // Resize the canvas to fill the screen while maintaining aspect ratio
         function resizeCanvas() {
@@ -1147,8 +1175,27 @@
             }
         }
 
-        // Fill all cells with a specific color
-        function fillAll(color) {
+        // Fill all contiguous cells with a specific color
+        function fillAll(row, col, color) {
+            originalColor = matrixData[row][col]
+            console.log(originalColor)
+            updateCell(row, col, color)
+            if(row > 0 && matrixData[row-1][col] == originalColor) {
+                fillAll(row - 1, col, color)
+            }
+            if(row < ROWS-1 && matrixData[row + 1][col] == originalColor) {
+                fillAll(row + 1, col, color)
+            }
+            if(col>0 && matrixData[row][col - 1] == originalColor) {
+                fillAll(row, col - 1, color)
+            }
+            if(col<COLS-1 && matrixData[row][col + 1] == originalColor) {
+                fillAll(row, col + 1, color)
+            }
+            
+        }
+        
+        function clearAll(color){
             for (let row = 0; row < ROWS; row++) {
                 for (let col = 0; col < COLS; col++) {
                     matrixData[row][col] = color;
@@ -1159,33 +1206,20 @@
 
         //Invert all cells
         function invertAll() {
-            console.log("Im in")
             for (let row = 0; row < ROWS; row++) {
                 for (let col = 0; col < COLS; col++) {
-                    if (matrixData[row][col] == '#ffffff') {
-                        matrixData[row][col] = '#000000';
-                    } else if (matrixData[row][col] == '#000000') {
-                        matrixData[row][col] = '#ffffff';
+                    switch (matrixData[row][col]) {
+                        case '#ffffff':
+                            matrixData[row][col] = '#000000';
+                            break;
+                        case '#000000':
+                            matrixData[row][col] = '#ffffff';
+                            break;
                     }
                 }
             }
             drawMatrix();
         }
-        
-        function invertGreys() {
-            for (let row = 0; row < ROWS; row++) {
-                for (let col = 0; col < COLS; col++) {
-                    if (matrixData[row][col] == '#999999') {
-                        matrixData[row][col] = '#505050';
-                    } else if (matrixData[row][col] == '#505050') {
-                        matrixData[row][col] = '#999999';
-                    }
-                }
-            }
-            drawMatrix();
-        }
-        
-        
 
         function mirrorHorizontal() {
             for (let row = 0; row < ROWS; row++) {
@@ -1285,7 +1319,7 @@
 
         // Export matrix data as JSON
         function exportData() {
-            const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#999999"', '0.3').replaceAll('"#505050"', '0.5');
+            const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#505050"', '0.5');
 
             swalBS.fire({
                 title: getCorrectTranslation('copycode'),
@@ -1301,6 +1335,37 @@
                 cancelButtonAriaLabel: "Thumbs down"
             });
         }
+        
+        function showHelp() {
+            swalBS.fire({
+                title: "<h1>How to use this tool</h1>",
+                icon: "question",
+                theme: "dark",
+                html: `
+                <div class="left_align"><h2>Drawing Tools</strong></h2>
+                <b>Draw:</b> Paint on the canvas.</br>
+                <b>Fill:</b> Fill contiguous pixels</br>
+                <b>Clear All:</b> Clear the canvas.</br></br>
+                <h2>Colors</h2>
+                Selects color to use with the drawing tool.</br>
+                <b>White:</b> 100% opacity pixel.</br>
+                <b>Grey:</b> 50% opacity pixel.</br>
+                <b>Black:</b> Turns off the pixel.</br></br>
+                <h2>Canvas Manipulation</h2>
+                <b>Invert:</b> Inverts black and white colors.</i></br>
+                <b>Mirror Horizontal:</b> Mirrors left side of the canvas to the right.</br>
+                <b>Mirror Vertical:</b> Mirrors top side of the canvas down.</br>
+                <b>Keyboard arrows:</b> Nudge the whole drawing Up, Down, Left, or Right.</br>
+                </br></div>
+                `,
+                customClass: {
+                    popup: 'swal2-custom-align'
+                },
+                showCloseButton: true,
+                focusConfirm: false,
+                confirmButtonText: `<i class="fa fa-thumbs-up"></i> Close`
+            });
+        }
 
         // Event listeners
         canvas.addEventListener('mousedown', (e) => {
@@ -1309,16 +1374,30 @@
             if (coords) {
                 switch (currentMode) {
                     case 'draw':
-                        updateCell(coords.row, coords.col, '#ffffff');
-                        break;
-                    case 'darkGrey':
-                        updateCell(coords.row, coords.col, '#505050');
-                        break;
-                    case 'lightGrey':
-                        updateCell(coords.row, coords.col, '#999999');
+                        switch (currentColor) {
+                            case 1:
+                                updateCell(coords.row, coords.col, '#ffffff');
+                                break;
+                            case 0.5:
+                                updateCell(coords.row, coords.col, '#505050');
+                                break;
+                            case 0:
+                                updateCell(coords.row, coords.col, '#000000');
+                                break;
+                        }
                         break;
                     case 'fill':
-                        fillAll('#ffffff');
+                        switch (currentColor) {
+                            case 1:
+                                fillAll(coords.row, coords.col, '#ffffff');
+                                break;
+                            case 0.5:
+                                fillAll(coords.row, coords.col, '#505050');
+                                break;
+                            case 0:
+                                fillAll(coords.row, coords.col, '#000000');
+                                break;
+                        }
                         break;
                     case 'clear':
                         updateCell(coords.row, coords.col, '#000000');
@@ -1336,13 +1415,17 @@
                 if (isDrawing) {
                     switch (currentMode) {
                         case 'draw':
-                            updateCell(coords.row, coords.col, '#ffffff');
-                            break;
-                        case 'darkGrey':
-                            updateCell(coords.row, coords.col, '#505050');
-                            break;
-                        case 'lightGrey':
-                            updateCell(coords.row, coords.col, '#999999');
+                            switch (currentColor) {
+                                case 1:
+                                    updateCell(coords.row, coords.col, '#ffffff');
+                                    break;
+                                case 0.5:
+                                    updateCell(coords.row, coords.col, '#505050');
+                                    break;
+                                case 0:
+                                    updateCell(coords.row, coords.col, '#000000');
+                                    break;
+                            }
                             break;
                         case 'clear':
                             updateCell(coords.row, coords.col, '#000000');
