@@ -1,445 +1,361 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <title>SignalRGB WLED Matrix Pixel Art Painter</title>
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #1e1e1e;
-            color: #fff;
-            font-family: Arial, sans-serif;
-        }
-
-        #controls {
-            margin-bottom: 10px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        #tools {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        #modal-save-controls,
-        #modal-load-controls {
-            position: relative;
-            display: grid;
-            gap: 10px;
-            align-items: start;
-        }
-
-        #modal-save-controls .button,
-        #modal-load-controls .button {
-            position: absolute;
-            right: 0;
-            bottom: 10px;
-        }
-
-        #modal-load-controls .button.danger {
-            left: 0;
-            right: unset;
-        }
-
-        #modal-save-controls .spacer,
-        #modal-load-controls .spacer {
-            padding-bottom: 50px;
-        }
-
-        button,
-        .button,
-        input[type="radio"]+label {
-            padding: 8px 16px;
-            background-color: #7066e0;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            text-decoration: none;
-        }
-
-        button:hover,
-        .button:hover,
-        input[type="radio"]+label:hover {
-            background-color: rgb(100, 89, 221);
-        }
-
-        button.success,
-        .button.success {
-            background-color: #28a745;
-        }
-
-        button.danger,
-        .button.danger {
-            background-color: #dc3545;
-        }
-
-        button.success:hover,
-        .button.success:hover {
-            background-color: #48d368;
-        }
-
-        button.danger:hover,
-        .button.danger:hover {
-            background-color: #e77681;
-        }
-
-        input[type="radio"] {
-            position: absolute !important;
-            clip: rect(0, 0, 0, 0);
-            height: 1px;
-            width: 1px;
-            border: 0;
-            overflow: hidden;
-        }
-
-        input[type="radio"]:checked+label {
-            background-color: rgb(100, 89, 221);
-        }
-
-        .input-group {
-            display: flex;
-        }
-
-        .input-group input,
-        .input-group button,
-        .input-group .button {
-            flex-grow: 1;
-        }
-
-        .input-group input:first-child,
-        .input-group label:first-child,
-        .input-group button:first-child,
-        .input-group .button:first-child {
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-            border-right: 0px solid #555;
-        }
-
-        .input-group input:last-child,
-        .input-group label:last-child,
-        .input-group button:last-child,
-        .input-group .button:last-child {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-        }
-
-        .input-group input:not(:first-child):not(:last-child),
-        .input-group label:not(:first-child):not(:last-child),
-        .input-group button:not(:first-child):not(:last-child),
-        .input-group .button:not(:first-child):not(:last-child) {
-            border-radius: 0;
-        }
-
-        input[type="text"] {
-            width: 99%;
-            height: 29px;
-            border-radius: 4px;
-            background-color: #333;
-            color: #fff;
-            border: 1px solid #555;
-        }
-
-        input[type="number"] {
-            width: 50px;
-            padding: 8px;
-            border-radius: 4px;
-            background-color: #333;
-            color: #fff;
-            border: 1px solid #555;
-        }
-
-        select {
-            padding: 8px;
-            border-radius: 4px;
-            background-color: #333;
-            color: #fff;
-            border: 1px solid #555;
-        }
-
-        #canvas-container {
-            border: 2px solid #555;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-
-        canvas {
-            display: block;
-        }
-
-        #matrix-info {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #aaa;
-        }
-
-        .label {
-            margin-right: 5px;
-            font-size: 14px;
-        }
-
-        .swal2-html-container code {
-            display: block;
-            padding: 20px 50px;
-            border-radius: 4px;
-            background-color: #333;
-            color: #fff;
-            border: 1px solid #555;
-            font-size: 12px;
-        }
-
-        .code-container {
-            position: relative;
-        }
-
-        .copy-code {
-            padding: 4px 8px;
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: transparent;
-            border: 1px solid #555;
-        }
-
-        .language-selector {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-
-        .force-border-radius {
-            border-top-left-radius: 4px !important;
-            border-bottom-left-radius: 4px !important;
-        }
-
-        .nudgeX {
-            animation: nudgeX-animation 0.3s ease-in-out;
-        }
-
-        .nudgeY {
-            animation: nudgeY-animation 0.3s ease-in-out;
-        }
-
-        @keyframes nudgeX-animation {
-            0% {
-                transform: translateX(0);
-            }
-
-            20% {
-                transform: translateX(-10px);
-            }
-
-            40% {
-                transform: translateX(10px);
-            }
-
-            60% {
-                transform: translateX(-5px);
-            }
-
-            80% {
-                transform: translateX(5px);
-            }
-
-            100% {
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes nudgeY-animation {
-            0% {
-                transform: translateY(0);
-            }
-
-            20% {
-                transform: translateY(-10px);
-            }
-
-            40% {
-                transform: translateY(10px);
-            }
-
-            60% {
-                transform: translateY(-5px);
-            }
-
-            80% {
-                transform: translateY(5px);
-            }
-
-            100% {
-                transform: translateY(0);
-            }
-        }
-
-        /* modal */
-        .modal-window {
-            position: fixed;
-            background-color: rgba(255, 255, 255, 0.25);
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            z-index: 999;
-            visibility: hidden;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s;
-        }
-
-        .modal-window:target {
-            visibility: visible;
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-window>div {
-            width: 400px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 10px 20px;
-            background: #1e1e1e;
-            border-radius: 5px;
-        }
-
-        .modal-window header {
-            font-weight: bold;
-        }
-
-        .modal-window h1 {
-            font-size: 150%;
-            margin: 0 0 15px;
-        }
-
-        .modal-close {
-            color: #aaa;
-            line-height: 50px;
-            position: absolute;
-            right: 0;
-            text-align: center;
-            top: 0;
-            width: 70px;
-            text-decoration: none;
-            transition: all 0.3s;
-            z-index: 999;
-        }
-
-        .modal-close:hover {
-            color: #fff;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" />
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
-    <div class="language-selector">
-        <span class="label" id="language-label"><span class="mdi mdi-translate"></span> Language:</span>
-        <select id="language-dropdown">
-            <option value="english">English</option>
-            <option value="chinese">中文</option>
-        </select>
-    </div>
+    <header>
+        <div class="bg-dark collapse" id="navbarHeader">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-8 col-md-7 py-4">
 
-    <h1>SignalRGB Nollie1/WLED Matrix Pixel Art Painter</h1>
-
-    <div id="controls">
-        <span class="label" id="size-label"><span class="mdi mdi-image-size-select-small"></span> Size:</span>
-        <div class="input-group">
-            <input id="size-cols" type="number" value="16" min="1" step="1" />
-            <input id="size-rows" type="number" value="16" min="1" step="1" />
+                    </div>
+                    <div class="col-sm-4 offset-md-1 py-4 text-end">
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" type="button" id="ddLanguage"
+                                data-bs-toggle="dropdown" aria-expanded="false"><span class="mdi mdi-translate"></span>
+                                Language:</button>
+                            <ul class="dropdown-menu" aria-labelledby="ddLanguage">
+                                <li><button class="dropdown-item" onclick="changeLanguage('english');">English</button>
+                                </li>
+                                <li><button class="dropdown-item" onclick="changeLanguage('chinese');">中文</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button id="import-btn" onclick="importData();"><span class="mdi mdi-import"></span> Import Data</button>
-        <button id="export-btn" onclick="exportData();"><span class="mdi mdi-export"></span> Export Data</button>
-        <input type="hidden" id="clipboard" />
-
-        <a id="load-btn" class="button" href="#modal-load" onclick="reloadSavedPixelArt();"><span
-                class="mdi mdi-cloud-outline"></span> Load</a>
-        <a id="save-btn" class="button" href="#modal-save"><span class="mdi mdi-content-save-outline"></span> Save</a>
-    </div>
-
-    <div id="tools">
-        <div class="input-group">
-            <input type="radio" id="draw" name="draw-mode" value="draw" checked>
-            <label for="draw" class="force-border-radius"><span class="mdi mdi-draw"></span> Draw</label>
-            <input type="radio" id="fill" name="draw-mode" value="fill">
-            <label for="fill"><span class="mdi mdi-format-color-fill"></span> Fill</label>
-            <input type="radio" id="clear" name="draw-mode" value="clear">
-            <label for="clear"><span class="mdi mdi-eraser"></span> Clear</label>
-            <button id="clear-btn" onclick="fillAll('#000000');"><span class="mdi mdi-trash-can-outline"></span> Clear
-                All</button>
+        <div class="navbar navbar-dark bg-dark bg-gradient shadow-sm">
+            <div class="container">
+                <a href="#" class="navbar-brand d-flex align-items-center">
+                    <img src="https://nolliergb.com/wp-content/uploads/2024/08/NOLLIE-RGB-1.png"
+                        class="image-fluid nollie-logo" />
+                    <strong>SignalRGB WLED/Nollie1 Matrix Pixel Art Painter</strong>
+                </a>
+                <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="mdi mdi-menu"></span>
+                </button>
+            </div>
         </div>
+    </header>
 
-        <button id="invert-btn" onclick="invertAll();"><span class="mdi mdi-invert-colors"></span> Invert</button>
-        <button id="horizontal-btn" onclick="mirrorHorizontal();"><span class="mdi mdi-flip-horizontal"></span> Mirror
-            Horizontal</button>
-        <button id="vertical-btn" onclick="mirrorVertical();"><span class="mdi mdi-flip-vertical"></span> Mirror
-            Vertical</button>
-    </div>
+    <main>
+        <section class="py-4 text-center container">
+            <div id="controls" class="row mb-3 g-3 d-flex justify-content-center">
+                <div class="col-auto">
+                    <div class="input-group">
+                        <span class="input-group-text" id="size-label"><span
+                                class="mdi mdi-image-size-select-small"></span> Size</span>
+                        <input class="form-control" id="size-cols" type="number" value="16" min="1" step="1" max="99"
+                            style="width: 6rem;" />
+                        <input class="form-control" id="size-rows" type="number" value="16" min="1" step="1" max="99"
+                            style="width: 6rem;" />
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-primary" id="import-btn" onclick="importData();"><span
+                            class="mdi mdi-import"></span> Import Data</button>
+                    <button type="button" class="btn btn-primary" id="export-btn" onclick="exportData();"><span
+                            class="mdi mdi-export"></span> Export Data</button>
+                    <input type="hidden" id="clipboard" />
+                    <button type="button" class="btn btn-primary" id="load-btn" data-bs-toggle="modal"
+                        data-bs-target="#modal-load" onclick="reloadSavedPixelArt();">
+                        <span class="mdi mdi-cloud-outline"></span> Load
+                    </button>
+                    <button type="button" class="btn btn-primary" id="save-btn" data-bs-toggle="modal"
+                        data-bs-target="#modal-save">
+                        <span class="mdi mdi-content-save-outline"></span> Save
+                    </button>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" id="share-btn" type="button" data-bs-toggle="modal"
+                        data-bs-target="#modal-share"><span class="mdi mdi-share-variant-outline"></span> Share</button>
+                    <button class="btn btn-primary" id="community-btn" type="button" data-bs-toggle="offcanvas"
+                        data-bs-target="#community" aria-controls="community"
+                        onclick="getCommunityItems(); getFavoritesCommunityItems();">
+                        <span class="mdi mdi-account-group-outline"></span> Community Pixel Art
+                    </button>
+                </div>
+            </div>
 
-    <div id="canvas-container">
-        <canvas id="matrix-canvas"></canvas>
-    </div>
+            <div id="tools" class="row mb-3 g-3 d-flex justify-content-center">
+                <div class="col-auto">
+                    <div class="btn-group">
+                        <input type="radio" class="btn-check" id="draw" name="draw-mode" value="draw" checked>
+                        <label for="draw" class="btn btn-primary"><span class="mdi mdi-draw"></span> Draw</label>
+                        <input type="radio" class="btn-check" id="grey" name="draw-mode" value="grey">
+                        <label for="grey" class="btn btn-primary"><span class="mdi mdi-draw"></span> Grey</label>
+                        <input type="radio" class="btn-check" id="fill" name="draw-mode" value="fill">
+                        <label for="fill" class="btn btn-primary"><span class="mdi mdi-format-color-fill"></span>
+                            Fill</label>
+                        <input type="radio" class="btn-check" id="clear" name="draw-mode" value="clear">
+                        <label for="clear" class="btn btn-primary"><span class="mdi mdi-eraser"></span> Clear</label>
+                        <button class="btn btn-primary" id="clear-btn" onclick="fillAll('#000000');"><span
+                                class="mdi mdi-trash-can-outline"></span>
+                            Clear
+                            All</button>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <button id="invert-btn" class="btn btn-primary" onclick="invertAll();"><span
+                            class="mdi mdi-invert-colors"></span>
+                        Invert</button>
+                    <button id="horizontal-btn" class="btn btn-primary" onclick="mirrorHorizontal();"><span
+                            class="mdi mdi-flip-horizontal"></span>
+                        Mirror
+                        Horizontal</button>
+                    <button id="vertical-btn" class="btn btn-primary" onclick="mirrorVertical();"><span
+                            class="mdi mdi-flip-vertical"></span> Mirror
+                        Vertical</button>
+                </div>
+            </div>
+        </section>
 
-    <div id="matrix-info">
-        <span id="mouse-pos">Position: (-1, -1)</span> |
-        <span id="cell-size">Cell Size: 0x0</span>
-    </div>
+        <div class="container">
+            <div id="canvas-container" class="d-flex justify-content-center">
+                <canvas id="matrix-canvas"></canvas>
+            </div>
 
-    <div id="modal-save" class="modal-window">
-        <div class="modal-content">
-            <a href="#" title="Close" class="modal-close"><span class="mdi mdi-close"></span></a>
+            <div id="matrix-info" class="d-flex justify-content-center">
+                <span id="mouse-pos">Position: (-1, -1)</span> |
+                <span id="cell-size">Cell Size: 0x0</span>
+            </div>
+        </div>
+    </main>
 
-            <div id="modal-save-controls">
-                <h2>Save pixel art</h2>
-                <span class="label">What would you like to call this pixel art?</span>
-                <input id="txt-save" type="text" placeholder="my cool pixel art" maxlength="50" />
-                <span class="spacer"></span>
-                <a class="button" href="#" id="save-confirm-btn" onclick="savePixelArt();">Submit</a>
+    <div class="modal fade" id="modal-save" tabindex="-1" aria-labelledby="modal-save-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modal-save-label">Save pixel art</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="txt-save" class="form-label">What would you like to call this pixel art?</label>
+                            <input id="txt-save" type="text" class="form-control" placeholder="my cool pixel art"
+                                maxlength="50" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="save-confirm-btn"
+                        onclick="savePixelArt();">Submit</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="modal-load" class="modal-window">
-        <div class="modal-content">
-            <a href="#" title="Close" class="modal-close"><span class="mdi mdi-close"></span></a>
-
-            <div id="modal-load-controls">
-                <h2>Load pixel art</h2>
-                <span class="label">Which pixel art would you like load?</span>
-                <select id="select-load">
-                    <option value="null" disabled selected>Please select...</option>
-                </select>
-                <span class="spacer"></span>
-                <a class="button" href="#" id="load-confirm-btn" onclick="loadPixelArt();">Submit</a>
-                <a class="button danger" href="#" id="remove-confirm-btn" onclick="removePixelArt();">Remove</a>
+    <div class="modal fade" id="modal-load" tabindex="-1" aria-labelledby="modal-load-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modal-load-label">Load pixel art</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="select-load" class="form-label">Which pixel art would you like load?</label>
+                            <select class="form-select" id="select-load">
+                                <option value="null" disabled selected>Please select...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" id="remove-confirm-btn">Remove</button>
+                    <button type="button" class="btn btn-primary" id="load-confirm-btn">Submit</button>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-share" tabindex="-1" aria-labelledby="modal-share-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modal-share-label">Share pixel art</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="txt-share-author" class="form-label">Who are you?</label>
+                            <input id="txt-share-author" type="text" class="form-control" placeholder="John Smith"
+                                maxlength="25" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="txt-share-name" class="form-label">What would you like to call this pixel
+                                art?</label>
+                            <input id="txt-share-name" type="text" class="form-control" placeholder="my cool pixel art"
+                                maxlength="50" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="share-confirm-btn">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-info" tabindex="-1" aria-labelledby="modal-info-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modal-info-label">Item</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-lg-6 col-md-12 mb-lg-0 mb-3">
+                            <label for="txtInfoName" class="form-label">Name</label>
+                            <input id="txtInfoName" type="text" class="form-control" value="" disabled />
+                        </div>
+                        <div class="col-lg-6 col-md-12 mb-lg-0 mb-3">
+                            <label for="txtInfoAuthor" class="form-label">Author</label>
+                            <input id="txtInfoAuthor" type="text" class="form-control" value="" disabled />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-lg-6 col-md-12 mb-lg-0 mb-3">
+                            <label for="txtInfoDate" class="form-label">Created</label>
+                            <input id="txtInfoDate" type="datetime-local" class="form-control" value="" disabled />
+                        </div>
+                        <div class="col-lg-6 col-md-12 mb-lg-0 mb-3">
+                            <label for="txtInfoSize" class="form-label">Size</label>
+                            <input id="txtInfoSize" type="text" class="form-control" value="" disabled />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="txtInfoData" class="form-label">Code</label>
+                            <div class="input-group">
+                                <textarea id="txtInfoData" class="form-control" rows="6" disabled></textarea>
+                                <button class="btn btn-outline-secondary" type="button"
+                                    id="btnInfoDataCopy" onclick="copyToClipboard('');">Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="offcanvas offcanvas-end w-75" tabindex="-1" id="community" aria-labelledby="community-Label">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="community-Label">Browse Community Pixel Art</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav nav-underline" id="stepTab" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" id="new-items-tab" data-bs-toggle="tab"
+                        data-bs-target="#new-items">Latest</button>
+                </li>
+
+                <li class="nav-item">
+                    <button class="nav-link" id="search-items-tab" data-bs-toggle="tab"
+                        data-bs-target="#search-items">Search</button>
+                </li>
+
+                <li class="nav-item">
+                    <button class="nav-link" id="favorites-items-tab" data-bs-toggle="tab"
+                        data-bs-target="#favorite-items">Favorites</button>
+                </li>
+            </ul>
+
+            <div class="tab-content mt-3" id="stepTabContent">
+                <div class="tab-pane fade show active" id="new-items">
+                    <div class="row mb-3" id="community-container">
+                    </div>
+                    <div class="row">
+                        <div class="d-grid gap-2 col-auto mx-auto">
+                            <button class="btn btn-outline-primary" type="button" data-page="0"
+                                id="community-load-more-btn" disabled>Load More</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="search-items">
+                    <div class="row mb-3">
+                        <div class="col">
+                        </div>
+                        <div class="col-auto float-end">
+                            <div class="input-group">
+                                <input class="form-control form-control-sm" type="search" id="txt-search"
+                                    placeholder="Search" aria-label="Search" autocomplete="off" />
+                                <button class="btn btn-outline-secondary btn-sm" type="button"
+                                    id="community-search"><span class="mdi mdi-magnify"></span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="community-search-container">
+                    </div>
+                    <div class="row">
+                        <div class="d-grid gap-2 col-auto mx-auto">
+                            <button class="btn btn-outline-primary" type="button" data-page="0"
+                                id="search-load-more-btn" disabled>Load More</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="favorite-items">
+                    <div class="row" id="community-favorites-container">
+                    </div>
+                    <div class="row">
+                        <div class="d-grid gap-2 col-auto mx-auto">
+                            <button class="btn btn-outline-primary" type="button" data-page="0"
+                                id="favorites-load-more-btn" disabled>Load More</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
+        //const api = 'http://localhost:3001/api/';
+        const api = 'https://pixelart.nolliergb.com/api/';
+
+        const swalBS = Swal.mixin({
+            customClass: {
+                confirmButton: 'btn btn-primary',
+                cancelButton: 'btn btn-secondary'
+            }
+        });
+
         const langDB = {
-            language: { en: '<span class="mdi mdi-translate"></span> Language:', zh: '<span class="mdi mdi-translate"></span> 语言:' },
+            language: { en: '<span class="mdi mdi-translate"></span> Language', zh: '<span class="mdi mdi-translate"></span> 语言' },
             header: { en: "SignalRGB WLED/Nollie1 Matrix Pixel Art Painter", zh: "SignalRGB WLED/Nollie1 像素屏画家" },
-            size: { en: '<span class="mdi mdi-image-size-select-small"></span> Size:', zh: '<span class="mdi mdi-image-size-select-small"></span> 大小:' },
-            import: { en: '<span class="mdi mdi-import"></span> Import Data', zh: '<span class="mdi mdi-import"></span> 导入数据' },
-            export: { en: '<span class="mdi mdi-export"></span> Export Data', zh: '<span class="mdi mdi-export"></span> 导出数据' },
+            size: { en: '<span class="mdi mdi-image-size-select-small"></span> Size', zh: '<span class="mdi mdi-image-size-select-small"></span> 大小' },
+            import: { en: '<span class="mdi mdi-import"></span> Import', zh: '<span class="mdi mdi-import"></span> 导入' },
+            export: { en: '<span class="mdi mdi-export"></span> Export', zh: '<span class="mdi mdi-export"></span> 导出' },
             draw: { en: '<span class="mdi mdi-draw"></span> Draw', zh: '<span class="mdi mdi-draw"></span> 绘画模式' },
+            grey: { en: '<span class="mdi mdi-grey"></span> Grey', zh: '<span class="mdi mdi-draw"></span> 灰色' },
             fill: { en: '<span class="mdi mdi-format-color-fill"></span> Fill', zh: '<span class="mdi mdi-format-color-fill"></span> 填充模式' },
             erase: { en: '<span class="mdi mdi-eraser"></span> Erase', zh: '<span class="mdi mdi-eraser"></span> 擦除模式' },
             clear: { en: '<span class="mdi mdi-trash-can-outline"></span> Clear All', zh: '<span class="mdi mdi-trash-can-outline"></span> 清除全部' },
@@ -463,23 +379,47 @@
             loadSubtitle: { en: 'Which pixel art would you like load?', zh: '您想要加载哪一个像素存档？' },
             saved: { en: 'Pixel art saved.', zh: '像素存档保存成功。' },
             remove: { en: 'Remove', zh: '删除' },
-            pleaseselect: { en: 'Please select...', zh: '请选择...' }
+            pleaseSelect: { en: 'Please select...', zh: '请选择...' },
+            errorParsingJson: { en: 'Error parsing JSON data.', zh: '解析 JSON 数据时出错。' },
+            oops: { en: 'Oops...', zh: '卧艹...' },
+            community: { en: '<span class="mdi mdi-account-group-outline"></span> Community Pixel Art', zh: '<span class="mdi mdi-account-group-outline"></span> 社区像素作品' },
+            share: { en: '<span class="mdi mdi-share-variant-outline"></span> Share', zh: '<span class="mdi mdi-share-variant-outline"></span> 分享' },
+            shareTitle: { en: 'Share pixel art', zh: '分享作品' },
+            shareAuthor: { en: 'Who are you?', zh: '你是谁？' },
+            shared: { en: 'The pixel artwork has been shared successfully.', zh: '像素作品已成功分享。' },
+            communityTitle: { en: 'Browse Community Pixel Art', zh: '浏览社区像素作品' },
+            search: { en: 'Search...', zh: '搜索...' },
+            itemExists: { en: 'The pixel art you are trying to share already exists on the server.', zh: '您尝试分享的像素作品已存在于服务器中。' },
+            latest: { en: '<span class="mdi mdi-fire"></span> Latest', zh: '<span class="mdi mdi-fire"></span> 最新' },
+            search2: { en: '<span class="mdi mdi-magnify"></span> Search', zh: '<span class="mdi mdi-magnify"></span> 搜索' },
+            loadMore: { en: '<span class="mdi mdi-plus"></span> Load More', zh: '<span class="mdi mdi-plus"></span> 加载更多' },
+            favorites: { en: '<span class="mdi mdi-heart-outline"></span> Favorites', zh: '<span class="mdi mdi-heart-outline"></span> 收藏夹' },
+            infoName: { en: 'Name', zh: '名字' },
+            infoAuthor: { en: 'Author', zh: '作者' },
+            infoCreated: { en: 'Created', zh: '提交时间' },
+            infoSize: { en: 'Size', zh: '大小' },
+            infoCode: { en: 'Code', zh: '代码' }
         };
+
+        var favorites = [];
 
         $(document).ready(function () {
             let language = localStorage.getItem('language') || 'english';
+            let author = localStorage.getItem('author') || null;
+            favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+
             $('body').attr('data-language', language);
+            $('#txt-share-author').val(author);
             changeLanguage(language);
-            $('#language-dropdown').val(language);
         });
 
-        function changeLanguage(lang, set = false) {
+        function changeLanguage(lang) {
             localStorage.setItem('language', lang);
 
             switch (lang) {
                 case 'chinese':
-                    $('#language-label').html(langDB.language.zh);
-                    $('h1').text(langDB.header.zh);
+                    $('#ddLanguage').html(langDB.language.zh);
+                    $('.navbar-brand strong').text(langDB.header.zh);
                     document.title = langDB.header.zh;
                     $('#size-label').html(langDB.size.zh);
                     $('#import-btn').html(langDB.import.zh);
@@ -487,6 +427,7 @@
                     $('#load-btn').html(langDB.load.zh);
                     $('#save-btn').html(langDB.save.zh);
                     $('label[for="draw"]').html(langDB.draw.zh);
+                    $('label[for="grey"]').html(langDB.grey.zh);
                     $('label[for="fill"]').html(langDB.fill.zh);
                     $('label[for="clear"]').html(langDB.erase.zh);
                     $('#clear-btn').html(langDB.clear.zh);
@@ -495,17 +436,32 @@
                     $('#vertical-btn').html(langDB.vertical.zh);
                     $('#mouse-pos').text(langDB.position1.zh);
                     $('#cell-size').text(langDB.cellsize1.zh);
-                    $('#modal-save-controls h2').text(langDB.saveTitle.zh);
-                    $('#modal-save-controls span.label').text(langDB.saveSubtitle.zh);
-                    $('#save-confirm-btn').text(langDB.submit.zh);
-                    $('#modal-load-controls h2').text(langDB.loadTitle.zh);
-                    $('#modal-load-controls span.label').text(langDB.loadSubtitle.zh);
-                    $('#load-confirm-btn').text(langDB.submit.zh);
+                    $('#modal-save-label').text(langDB.saveTitle.zh);
+                    $('label[for="txt-save"], label[for="txt-share-name"]').text(langDB.saveSubtitle.zh);
+                    $('#save-confirm-btn, #share-confirm-btn, #load-confirm-btn').text(langDB.submit.zh);
+                    $('#modal-load-label').text(langDB.loadTitle.zh);
+                    $('label[for="select-load"]').text(langDB.loadSubtitle.zh);
                     $('#remove-confirm-btn').text(langDB.remove.zh);
+                    $('#community-btn').html(langDB.community.zh);
+                    $('#share-btn').html(langDB.share.zh);
+                    $('#modal-share-label').text(langDB.shareTitle.zh);
+                    $('label[for="txt-share-author"]').text(langDB.shareAuthor.zh);
+                    $('#community-Label').text(langDB.communityTitle.zh);
+                    $('#txt-search').attr('placeholder', langDB.search.zh);
+                    $('#new-items-tab').html(langDB.latest.zh);
+                    $('#search-items-tab').html(langDB.search2.zh);
+                    $('#community-load-more-btn, #search-load-more-btn, #favorites-load-more-btn').html(langDB.loadMore.zh);
+                    $('#favorites-items-tab').html(langDB.favorites.zh);
+                    $('label[for="txtInfoName"]').text(langDB.infoName.zh);
+                    $('label[for="txtInfoAuthor"]').text(langDB.infoAuthor.zh);
+                    $('label[for="txtInfoDate"]').text(langDB.infoCreated.zh);
+                    $('label[for="txtInfoSize"]').text(langDB.infoSize.zh);
+                    $('label[for="txtInfoData"]').text(langDB.infoCode.zh);
+                    $('#btnInfoDataCopy').text(langDB.copy.zh);
                     break;
                 default:
-                    $('#language-label').html(langDB.language.en);
-                    $('h1').text(langDB.header.en);
+                    $('#ddLanguage').html(langDB.language.en);
+                    $('.navbar-brand strong').text(langDB.header.en);
                     document.title = langDB.header.en;
                     $('#size-label').html(langDB.size.en);
                     $('#import-btn').html(langDB.import.en);
@@ -513,6 +469,7 @@
                     $('#load-btn').html(langDB.load.en);
                     $('#save-btn').html(langDB.save.en);
                     $('label[for="draw"]').html(langDB.draw.en);
+                    $('label[for="grey"]').html(langDB.grey.en);
                     $('label[for="fill"]').html(langDB.fill.en);
                     $('label[for="clear"]').html(langDB.erase.en);
                     $('#clear-btn').html(langDB.clear.en);
@@ -521,15 +478,32 @@
                     $('#vertical-btn').html(langDB.vertical.en);
                     $('#mouse-pos').text(langDB.position1.en);
                     $('#cell-size').text(langDB.cellsize1.en);
-                    $('#modal-save-controls h2').text(langDB.saveTitle.en);
-                    $('#modal-save-controls span.label').text(langDB.saveSubtitle.en);
-                    $('#save-confirm-btn').text(langDB.submit.en);
-                    $('#modal-load-controls h2').text(langDB.loadTitle.en);
-                    $('#modal-load-controls span.label').text(langDB.loadSubtitle.en);
-                    $('#load-confirm-btn').text(langDB.submit.en);
+                    $('#modal-save-label').text(langDB.saveTitle.en);
+                    $('label[for="txt-save"], label[for="txt-share-name"]').text(langDB.saveSubtitle.en);
+                    $('#save-confirm-btn, #share-confirm-btn, #load-confirm-btn').text(langDB.submit.en);
+                    $('#modal-load-label').text(langDB.loadTitle.en);
+                    $('label[for="select-load"]').text(langDB.loadSubtitle.en);
                     $('#remove-confirm-btn').text(langDB.remove.en);
+                    $('#community-btn').html(langDB.community.en);
+                    $('#share-btn').html(langDB.share.en);
+                    $('#modal-share-label').text(langDB.shareTitle.en);
+                    $('label[for="txt-share-author"]').text(langDB.shareAuthor.en);
+                    $('#community-Label').text(langDB.communityTitle.en);
+                    $('#txt-search').attr('placeholder', langDB.search.en);
+                    $('#new-items-tab').html(langDB.latest.en);
+                    $('#search-items-tab').html(langDB.search2.en);
+                    $('#community-load-more-btn, #search-load-more-btn, #favorites-load-more-btn').html(langDB.loadMore.en);
+                    $('#favorites-items-tab').html(langDB.favorites.en);
+                    $('label[for="txtInfoName"]').text(langDB.infoName.en);
+                    $('label[for="txtInfoAuthor"]').text(langDB.infoAuthor.en);
+                    $('label[for="txtInfoDate"]').text(langDB.infoCreated.en);
+                    $('label[for="txtInfoSize"]').text(langDB.infoSize.en);
+                    $('label[for="txtInfoData"]').text(langDB.infoCode.en);
+                    $('#btnInfoDataCopy').text(langDB.copy.en);
             }
-        }
+
+            $('body').attr('data-language', lang);
+        };
 
         function getCorrectTranslation(lang) {
             let body = $('body').attr('data-language');
@@ -542,11 +516,6 @@
             }
             return null;
         }
-
-        $('#language-dropdown').on('change', function () {
-            changeLanguage($(this).val(), true);
-            $('body').attr('data-language', $(this).val());
-        });
 
         $('#size-cols, #size-rows').on('input', function (e) {
             COLS = parseInt($('#size-cols').val());
@@ -567,9 +536,9 @@
                 text = await navigator.clipboard.readText()
                 $('#clipboard').val(text);
             } catch (error) {
-                Swal.fire({
+                swalBS.fire({
                     icon: "error",
-                    title: "Oops...",
+                    title: getCorrectTranslation('oops'),
                     theme: "dark",
                     text: "Failed to read clipboard. Using execCommand instead.",
                 });
@@ -583,75 +552,93 @@
                 matrixData = JSON.parse($('#clipboard').val());
                 matrixData = matrixData.map(row => row.map(value => value === 0 ? "#000000" : "#ffffff"));
                 drawMatrix();
-            } catch(e) {
+            } catch (e) {
                 console.log(e);
-                Swal.fire({
+                swalBS.fire({
                     icon: "error",
-                    title: "Oops...",
+                    title: getCorrectTranslation('oops'),
                     theme: "dark",
-                    text: "Error parsing JSON data.",
+                    text: getCorrectTranslation('errorParsingJson'),
                 });
             }
         }
 
-        function removePixelArt() {
-            let name = $('#select-load option:selected').text();
-            console.log(name);
-            localStorage.removeItem(`item-${name}`);
-        }
+        $('#remove-confirm-btn').click(function (evt) {
+            if ($('#select-load').val() === 'null') {
+                $('#select-load').addClass('is-invalid');
+            } else {
+                let name = $('#select-load option:selected').text();
+                console.log(name);
+                localStorage.removeItem(`item-${name}`);
 
-        function loadPixelArt() {
-            try {
-                var $select = $('#select-load option:selected');
-
-                console.log($select.data('size')[0]);
-                console.log($select.data('size')[1]);
-
-                COLS = parseInt($select.data('size')[0]);
-                ROWS = parseInt($select.data('size')[1]);
-
-                matrixData = Array(ROWS).fill().map(() => Array(COLS).fill('#000000'));
-                resizeCanvas();
-
-                matrixData = JSON.parse($select.val());
-                matrixData = matrixData.map(row => row.map(value => value === 0 ? "#000000" : "#ffffff"));
-                drawMatrix();
-
-                $('#size-cols').val(COLS);
-                $('#size-rows').val(ROWS);
-            } catch(e) {
-                console.log(e);
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    theme: "dark",
-                    text: "Error parsing JSON data.",
-                });
+                if ($('#select-load').hasClass('is-invalid')) $('select-load').removeClass('is-invalid');
+                $('#modal-load').modal('hide');
             }
-        };
+        });
 
-        function savePixelArt() {
-            const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0');
-            const name = $('#txt-save').val();
-            const obj = { name: name, size: [parseInt($('#size-cols').val()), parseInt($('#size-rows').val())], data: dataStr };
-            localStorage.setItem(`item-${name}`, JSON.stringify(obj));
+        $('#load-confirm-btn').click(function (evt) {
+            if ($('#select-load').val() === 'null') {
+                $('#select-load').addClass('is-invalid');
+            } else {
+                try {
+                    var $select = $('#select-load option:selected');
 
-            Swal.fire({
-                position: "top-end",
-                icon: "success",
-                theme: "dark",
-                title: getCorrectTranslation('saved'),
-                showConfirmButton: false,
-                timer: 1500
-            });
+                    COLS = parseInt($select.data('size')[0]);
+                    ROWS = parseInt($select.data('size')[1]);
 
-            $('#txt-save').val('');
-        };
+                    matrixData = Array(ROWS).fill().map(() => Array(COLS).fill('#000000'));
+                    resizeCanvas();
+
+                    matrixData = JSON.parse($select.val());
+                    matrixData = matrixData.map(row => row.map(value => value === 0 ? "#000000" : "#ffffff"));
+                    drawMatrix();
+
+                    $('#size-cols').val(COLS);
+                    $('#size-rows').val(ROWS);
+
+                    if ($('#select-load').hasClass('is-invalid')) $('select-load').removeClass('is-invalid');
+                    $('#modal-load').modal('hide');
+                } catch (e) {
+                    console.log(e);
+                    swalBS.fire({
+                        icon: "error",
+                        title: getCorrectTranslation('oops'),
+                        theme: "dark",
+                        text: getCorrectTranslation('errorParsingJson'),
+                    });
+                }
+            }
+
+        });
+
+        $('#save-confirm-btn').click(function (evt) {
+            if (!$('#txt-save').val()) {
+                $('#txt-save').addClass('is-invalid');
+            } else {
+                const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0');
+                const name = $('#txt-save').val();
+                const obj = { name: name, size: [parseInt($('#size-cols').val()), parseInt($('#size-rows').val())], data: dataStr };
+                localStorage.setItem(`item-${name}`, JSON.stringify(obj));
+
+                swalBS.fire({
+                    position: "top-end",
+                    icon: "success",
+                    theme: "dark",
+                    title: getCorrectTranslation('saved'),
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+
+                $('#txt-save').val('');
+                if ($('#txt-save').hasClass('is-invalid')) $('#txt-save').removeClass('is-invalid');
+                $('#modal-save').modal('hide');
+            }
+        });
 
         function reloadSavedPixelArt() {
             $('#select-load').find('optgroup').remove();
-            $('#select-load').find('option').remove().end().append($('<option></option>').val('null').prop('disabled', true).prop('selected', true).html(getCorrectTranslation('pleaseselect')));
-            var values = stringifyLocalStorageExcept(['language']);
+            $('#select-load').find('option').remove().end().append($('<option></option>').val('null').prop('disabled', true).prop('selected', true).html(getCorrectTranslation('pleaseSelect')));
+            var values = stringifyLocalStorageExcept(['language', 'author', 'favorites']);
             $.each(values, function (key, item) {
                 $('#select-load').append($(`<option data-size="[${item.size}]" data-group="${item.size[0]}x${item.size[1]}" value="${item.data}">${item.name}</option>`).val(item.data).html(item.name));
             });
@@ -681,6 +668,360 @@
             }
             return filtered;
         }
+        function searchCommunityItems(search_string, page = 0) {
+            $.ajax({
+                url: `${api}search/${search_string}/${page}`,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    console.log(response);
+
+                    if (response.success === true && response.pagination.total >= 1) {
+                        if (page === 0) $('#community-search-container').empty();
+                        var children = [];
+
+                        $.each(response.data, function (key, item) {
+                            let isFavorite = favorites.includes(item.id);
+                            var child = `<div class="col-sm-6 col-md-4 col-lg-2 mb-4 d-flex align-items-stretch">` +
+                                `<div class="card shadow-sm">` +
+                                `<img src="${item.preview}" class="image-fluid card-img-top" />` +
+                                `<div class="card-body">` +
+                                `<p class="card-text">${item.name}</p>` +
+                                `<div class="d-flex justify-content-between align-items-center mt-auto">` +
+                                `<div class="btn-group" role="group">` +
+                                `<button type="button" class="btn btn-sm btn-outline-primary" onclick="downloadItem(${item.id});">` +
+                                `<span class="mdi mdi-download"></span>` +
+                                `</button>` +
+                                `<button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal-info" onclick="itemInfo(${item.id});">` +
+                                `<span class="mdi mdi-dots-horizontal"></span>` +
+                                `</button>` +
+                                `<button type="button" class="btn btn-sm ${isFavorite ? 'btn-danger' : 'btn-outline-danger'}" onclick="addToFavorite(${item.id});">` +
+                                `<span class="mdi mdi-heart"></span>` +
+                                `</button>` +
+                                `</div>` +
+                                `<small class="text-muted">${item.author}</small>` +
+                                `</div>` +
+                                `</div>` +
+                                `</div>` +
+                                `</div>`;
+                            children.push(child);
+                        });
+
+                        $('#community-search-container').append(children);
+                        if (response.pagination.hasMore) {
+                            $('#search-load-more-btn').attr('data-page', response.pagination.nextPage);
+                            $('#search-load-more-btn').prop('disabled', false);
+                        } else {
+                            $('#search-load-more-btn').prop('disabled', true);
+                        }
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    swalBS.fire({
+                        icon: "error",
+                        title: getCorrectTranslation('oops'),
+                        theme: "dark",
+                        text: err.statusText,
+                    });
+                }
+            });
+        }
+
+        $('#community-search').click(function (evt) {
+            if ($('#txt-search').val()) {
+                $('#search-load-more-btn').attr('data-page', 0);
+                searchCommunityItems($('#txt-search').val());
+            }
+        });
+
+        function getCommunityItems(page = 0) {
+            $.ajax({
+                url: `${api}allitems/${page}`,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success === true && response.pagination.total >= 1) {
+                        if (page === 0) $('#community-container').empty();
+                        var children = [];
+
+                        $.each(response.data, function (key, item) {
+                            let isFavorite = favorites.includes(item.id);
+                            var child = `<div class="col-sm-6 col-md-4 col-lg-2 mb-4 d-flex align-items-stretch">` +
+                                `<div class="card shadow-sm">` +
+                                `<img src="${item.preview}" class="image-fluid card-img-top" />` +
+                                `<div class="card-body">` +
+                                `<p class="card-text">${item.name}</p>` +
+                                `<div class="d-flex justify-content-between align-items-center mt-auto">` +
+                                `<div class="btn-group" role="group">` +
+                                `<button type="button" class="btn btn-sm btn-outline-primary" onclick="downloadItem(${item.id});">` +
+                                `<span class="mdi mdi-download"></span>` +
+                                `</button>` +
+                                `<button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal-info" onclick="itemInfo(${item.id});">` +
+                                `<span class="mdi mdi-dots-horizontal"></span>` +
+                                `</button>` +
+                                `<button type="button" class="btn btn-sm ${isFavorite ? 'btn-danger' : 'btn-outline-danger'}" onclick="addToFavorite(${item.id});">` +
+                                `<span class="mdi mdi-heart"></span>` +
+                                `</button>` +
+                                `</div>` +
+                                `<small class="text-muted">${item.author}</small>` +
+                                `</div>` +
+                                `</div>` +
+                                `</div>` +
+                                `</div>`;
+                            children.push(child);
+                        });
+
+                        $('#community-container').append(children);
+                        if (response.pagination.hasMore) {
+                            $('#community-load-more-btn').attr('data-page', response.pagination.nextPage);
+                            $('#community-load-more-btn').prop('disabled', false);
+                        } else {
+                            $('#community-load-more-btn').prop('disabled', true);
+                        }
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    swalBS.fire({
+                        icon: "error",
+                        title: getCorrectTranslation('oops'),
+                        theme: "dark",
+                        text: err.statusText,
+                    });
+                }
+            });
+        }
+
+        function getFavoritesCommunityItems(page = 0) {
+            $.ajax({
+                url: `${api}items/${JSON.stringify(favorites)}/${page}`,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success === true && response.pagination.total >= 1) {
+                        if (page === 0) $('#community-favorites-container').empty();
+                        var children = [];
+                        console.log(response)
+
+                        $.each(response.data, function (key, item) {
+                            let isFavorite = favorites.includes(item.id);
+                            var child = `<div class="col-sm-6 col-md-4 col-lg-2 mb-4 d-flex align-items-stretch">` +
+                                `<div class="card shadow-sm">` +
+                                `<img src="${item.preview}" class="image-fluid card-img-top" />` +
+                                `<div class="card-body">` +
+                                `<p class="card-text">${item.name}</p>` +
+                                `<div class="d-flex justify-content-between align-items-center mt-auto">` +
+                                `<div class="btn-group" role="group">` +
+                                `<button type="button" class="btn btn-sm btn-outline-primary" onclick="downloadItem(${item.id});">` +
+                                `<span class="mdi mdi-download"></span>` +
+                                `</button>` +
+                                `<button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal-info" onclick="itemInfo(${item.id});">` +
+                                `<span class="mdi mdi-dots-horizontal"></span>` +
+                                `</button>` +
+                                `<button type="button" class="btn btn-sm ${isFavorite ? 'btn-danger' : 'btn-outline-danger'}" onclick="addToFavorite(${item.id});">` +
+                                `<span class="mdi mdi-heart"></span>` +
+                                `</button>` +
+                                `</div>` +
+                                `<small class="text-muted">${item.author}</small>` +
+                                `</div>` +
+                                `</div>` +
+                                `</div>` +
+                                `</div>`;
+                            children.push(child);
+                        });
+
+                        $('#community-favorites-container').append(children);
+                        if (response.pagination.hasMore) {
+                            $('#favorites-load-more-btn').attr('data-page', response.pagination.nextPage);
+                            $('#favorites-load-more-btn').prop('disabled', false);
+                        } else {
+                            $('#favorites-load-more-btn').prop('disabled', true);
+                        }
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    swalBS.fire({
+                        icon: "error",
+                        title: getCorrectTranslation('oops'),
+                        theme: "dark",
+                        text: err.statusText,
+                    });
+                }
+            });
+        }
+
+        function canvasToBase64() {
+            var canvas = $('#matrix-canvas')[0]; // Get the DOM element
+            var base64String = canvas.toDataURL('image/png', 0.1); // Default is PNG format
+            return base64String;
+        }
+
+        $('#share-confirm-btn').click(function (evt) {
+            if (!$('#txt-share-author').val()) {
+                $('#txt-share-author').addClass('is-invalid');
+            } else if (!$('#txt-share-name').val()) {
+                $('#txt-share-name').addClass('is-invalid');
+            } else {
+                const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0');
+                var json = {
+                    author: $('#txt-share-author').val(),
+                    name: $('#txt-share-name').val(),
+                    size: [parseInt($('#size-cols').val()), parseInt($('#size-rows').val())],
+                    data: dataStr,
+                    preview: canvasToBase64()
+                };
+                var jsonData = JSON.stringify(json);
+
+                $.ajax({
+                    url: `${api}items`,
+                    type: 'POST',
+                    data: jsonData,
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success === true) {
+                            swalBS.fire({
+                                position: "top-end",
+                                icon: "success",
+                                theme: "dark",
+                                title: getCorrectTranslation('shared'),
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+
+                            localStorage.setItem('author', $('#txt-share-author').val());
+
+                            $('#txt-share-name').val('');
+                            if ($('#txt-share-author').hasClass('is-invalid')) $('#txt-share-author').removeClass('is-invalid');
+                            if ($('#txt-share-name').hasClass('is-invalid')) $('#txt-share-name').removeClass('is-invalid');
+
+                            $('#modal-share').modal('hide');
+                        } else {
+                            swalBS.fire({
+                                icon: "error",
+                                title: getCorrectTranslation('oops'),
+                                theme: "dark",
+                                text: getCorrectTranslation('itemExists'),
+                            });
+                        }
+                    },
+                    error: function (err) {
+                        swalBS.fire({
+                            icon: "error",
+                            title: getCorrectTranslation('oops'),
+                            theme: "dark",
+                            text: err.statusText,
+                        });
+                    }
+                });
+            }
+        });
+
+        function downloadItem(id) {
+            $.ajax({
+                url: `${api}item/${id}`,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success === true) {
+                        let $item = response.data;
+
+                        COLS = $item.size[0];
+                        ROWS = $item.size[1];
+
+                        matrixData = Array(ROWS).fill().map(() => Array(COLS).fill('#000000'));
+                        resizeCanvas();
+
+                        matrixData = JSON.parse($item.data);
+                        matrixData = matrixData.map(row => row.map(value => value === 0 ? "#000000" : "#ffffff"));
+                        drawMatrix();
+
+                        $('#size-cols').val(COLS);
+                        $('#size-rows').val(ROWS);
+
+                        $('#community').offcanvas('hide');
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    swalBS.fire({
+                        icon: "error",
+                        title: getCorrectTranslation('oops'),
+                        theme: "dark",
+                        text: err.statusText,
+                    });
+                }
+            });
+        }
+
+        $('#txt-search').on('keydown', function (event) {
+            if (event.keyCode === 13) {
+                $('#community-search').click();
+                event.preventDefault()
+            }
+        });
+
+        $('#community-load-more-btn').click(function (evt) {
+            getCommunityItems(parseInt($(this).attr('data-page')));
+        });
+
+        $('#search-load-more-btn').click(function (evt) {
+            searchCommunityItems($('#txt-search').val(), parseInt($(this).attr('data-page')));
+        });
+
+        $('#favorites-load-more-btn').click(function (evt) {
+            getFavoritesCommunityItems($(this.attr('data-page')));
+        })
+
+        function addToFavorite(id) {
+            if (!favorites.includes(id)) {
+                favorites.push(id);
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                $(`button[onclick="addToFavorite(${id});"]`).removeClass('btn-outline-danger').addClass('btn-danger');
+            } else {
+                favorites.splice($.inArray(id, favorites), 1);
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+                $(`button[onclick="addToFavorite(${id});"]`).removeClass('btn-danger').addClass('btn-outline-danger');
+            }
+        }
+
+        function itemInfo(id) {
+            $.ajax({
+                url: `${api}item/${id}`,
+                type: 'GET',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                success: function (response) {
+                    if (response.success === true) {
+                        let item = response.data;
+                        const datetimeLocal = item.submittime.slice(0, -5);
+
+                        $('#modal-info-label').text(`${item.id}: ${item.name}`);
+                        $('#txtInfoName').val(item.name);
+                        $('#txtInfoAuthor').val(item.author);
+                        $('#txtInfoSize').val(`${item.size[0]}x${item.size[1]}`);
+                        $('#txtInfoDate').val(datetimeLocal);
+                        $('#txtInfoData').val(item.data);
+                        $('#btnInfoDataCopy').attr('onclick', `copyToClipboard('${item.data}');`);
+                    }
+                },
+                error: function (err) {
+                    console.log(err);
+                    swalBS.fire({
+                        icon: "error",
+                        title: getCorrectTranslation('oops'),
+                        theme: "dark",
+                        text: err.statusText,
+                    });
+                }
+            });
+        }
     </script>
 
     <script>
@@ -703,8 +1044,8 @@
 
         // Resize the canvas to fill the screen while maintaining aspect ratio
         function resizeCanvas() {
-            const maxWidth = window.innerWidth * 0.9;
-            const maxHeight = window.innerHeight * 0.6;
+            const maxWidth = window.innerWidth * 0.95;
+            const maxHeight = window.innerHeight * 0.7;
 
             // Calculate the cell size to fit the matrix in the available space
             const cellWidthByWidth = maxWidth / COLS;
@@ -823,13 +1164,14 @@
         }
 
         function copyToClipboard(text) {
+            console.log(text);
             var $temp = $('<input>');
             $('body').append($temp);
             $temp.val(text).select();
             document.execCommand('copy');
             $temp.remove();
 
-            Swal.fire({
+            swalBS.fire({
                 position: "top-end",
                 icon: "success",
                 theme: "dark",
@@ -901,13 +1243,13 @@
 
         // Export matrix data as JSON
         function exportData() {
-            const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0');
+            const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#808080"', '0.5');
 
-            Swal.fire({
+            swalBS.fire({
                 title: getCorrectTranslation('copycode'),
                 icon: "success",
                 theme: "dark",
-                html: `<div class="code-container"><code>${dataStr}</code><button class="copy-code" onclick="copyToClipboard('${dataStr}');">${getCorrectTranslation('copy')}</button></div>`,
+                html: `<div class="code-container"><code>${dataStr}</code><button class="btn btn-outline-primary copy-code" onclick="copyToClipboard('${dataStr}');">${getCorrectTranslation('copy')}</button></div>`,
                 showCloseButton: false,
                 showCancelButton: false,
                 focusConfirm: false,
@@ -926,6 +1268,9 @@
                 switch (currentMode) {
                     case 'draw':
                         updateCell(coords.row, coords.col, '#ffffff');
+                        break;
+                    case 'grey':
+                        updateCell(coords.row, coords.col, '#808080');
                         break;
                     case 'fill':
                         fillAll('#ffffff');
@@ -947,6 +1292,9 @@
                     switch (currentMode) {
                         case 'draw':
                             updateCell(coords.row, coords.col, '#ffffff');
+                            break;
+                        case 'grey':
+                            updateCell(coords.row, coords.col, '#808080');
                             break;
                         case 'clear':
                             updateCell(coords.row, coords.col, '#000000');
