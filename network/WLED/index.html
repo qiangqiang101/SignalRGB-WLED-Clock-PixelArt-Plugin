@@ -1,7 +1,5 @@
-
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,45 +14,135 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO"
         crossorigin="anonymous"></script>
+    <script>
+        // Colors
+        let lightGrey="#A9A9A9"
+        let darkGrey="#505050"
+        let white="#FFFFFF"
+        let black="#000000"
+        
+        let lightGreyValue = 0.7
+        let darkGreyValue = 0.5
+        let whiteValue = 1
+        let blackValue = 0
+
+        const colorMap = {
+            [white]: white,
+            [black]: black,
+            [darkGrey]: darkGreyValue,
+            [lightGrey]: lightGreyValue
+        };
+
+        const colorMapReverse = {
+            [white]: white,
+            [black]: black,
+            [darkGreyValue]: darkGrey,
+            [lightGreyValue]: lightGrey
+        };
+    </script>
 </head>
 
 <body>
     <header>
-        <div class="bg-dark collapse" id="navbarHeader">
+        <nav class="navbar navbar-expand-lg bg-body-tertiary bg-dark border-bottom border-body">
             <div class="container">
-                <div class="row">
-                    <div class="col-sm-8 col-md-7 py-4">
-
-                    </div>
-                    <div class="col-sm-4 offset-md-1 py-4 text-end">
-                        <div class="dropdown">
-                            <button class="btn btn-primary dropdown-toggle" type="button" id="ddLanguage"
-                                data-bs-toggle="dropdown" aria-expanded="false"><span class="mdi mdi-translate"></span>
-                                Language:</button>
-                            <ul class="dropdown-menu" aria-labelledby="ddLanguage">
+                <a class="navbar-brand" href="index.html">
+                    <img src="https://nolliergb.com/wp-content/uploads/2024/08/NOLLIE-RGB-1.png" alt="nollie" width="80"
+                        height="auto" />
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="index.html"><span
+                                    class="mdi mdi-home-circle-outline"></span> Home</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="ddInstall" href="#" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="mdi mdi-tools"></span> Install Pixel Art Addon
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item"
+                                        href="https://srgbmods.net/s?p=addon/install?url=https://gitlab.com/nollie/nolliecontroller"
+                                        target="_blank">Nollie</a></li>
+                                <li><a class="dropdown-item"
+                                        href="https://srgbmods.net/s?p=addon/install?url=https://github.com/qiangqiang101/SRGB-Plugins"
+                                        target="_blank">WLED</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="community-btn" href="#" data-bs-toggle="offcanvas"
+                                data-bs-target="#community" aria-controls="community"
+                                onclick="getCommunityItems();"><span class="mdi mdi-account-group-outline"></span>
+                                Community Pixel Art</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="ddLanguage" href="#" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="mdi mdi-translate"></span> Language
+                            </a>
+                            <ul class="dropdown-menu">
                                 <li><button class="dropdown-item" onclick="changeLanguage('english');">English</button>
                                 </li>
                                 <li><button class="dropdown-item" onclick="changeLanguage('chinese');">中文</button></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-success" id="btnShare" type="button" style="display: none;"><span
+                                class="mdi mdi-share-variant-outline"></span> Share</button>
+                        <div class="dropdown" id="ddLogin">
+                            <button type="button" class="btn btn-outline-primary dropdown-toggle" id="btnLogin"
+                                data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"><span
+                                    class="mdi mdi-login"></span> Login</button>
+                            <form id="frmLogin" class="dropdown-menu p-4">
+                                <div class="mb-3">
+                                    <label for="txtLoginUsername" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="txtLoginUsername" maxlength="30"
+                                        placeholder="Username">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="txtLoginPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="txtLoginPassword" maxlength="30"
+                                        placeholder="Password">
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="chkLoginRemember">
+                                        <label class="form-check-label" for="chkLoginRemember">
+                                            Remember me
+                                        </label>
+                                    </div>
+                                </div>
+                                <button id="btnLoginConfirm" type="button" class="btn btn-primary">Sign in</button>
+                            </form>
+                        </div>
+                        <button class="btn btn-primary" type="button" data-bs-toggle="modal" id="btnSignup"
+                            data-bs-target="#modal-signup"><span class="mdi mdi-account-plus-outline"></span> Sign
+                            Up</button>
+                        <div class="btn-group" id="member" style="display: none;">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                Guest
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                        data-bs-target="#modal-change-password" id="aPassword">Password</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#" id="aLogout">Logout</a></li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="navbar navbar-dark bg-dark bg-gradient shadow-sm">
-            <div class="container">
-                <a href="#" class="navbar-brand d-flex align-items-center">
-                    <img src="https://nolliergb.com/wp-content/uploads/2024/08/NOLLIE-RGB-1.png"
-                        class="image-fluid nollie-logo" />
-                    <strong>SignalRGB WLED/Nollie1 Matrix Pixel Art Painter</strong>
-                </a>
-                <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <span class="mdi mdi-menu"></span>
-                </button>
-            </div>
-        </div>
+        </nav>
     </header>
 
     <main>
@@ -85,43 +173,80 @@
                         <span class="mdi mdi-content-save-outline"></span> Save
                     </button>
                 </div>
-                <div class="col-auto">
-                    <button class="btn btn-primary" id="share-btn" type="button" data-bs-toggle="modal"
-                        data-bs-target="#modal-share"><span class="mdi mdi-share-variant-outline"></span> Share</button>
-                    <button class="btn btn-primary" id="community-btn" type="button" data-bs-toggle="offcanvas"
-                        data-bs-target="#community" aria-controls="community" onclick="getCommunityItems();">
-                        <span class="mdi mdi-account-group-outline"></span> Community Pixel Art
-                    </button>
+                <div class="col-auto" id="editItem" style="display: none;">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-success" id="btnUpdateEdit" data-bs-toggle="modal"
+                            data-bs-target="#modal-update">
+                            <span class="mdi mdi-content-save-outline"></span> Update
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" id="btnCancelEdit"
+                            onclick="cancelEdit();">
+                            <span class="mdi mdi-cancel"></span> Cancel
+                        </button>
+                    </div>
+
+                    <input id="txtUpdateId" value="-1" type="hidden" />
                 </div>
             </div>
 
             <div id="tools" class="row mb-3 g-3 d-flex justify-content-center">
                 <div class="col-auto">
                     <div class="btn-group">
-                        <input type="radio" class="btn-check" id="draw" name="draw-mode" value="draw" checked>
-                        <label for="draw" class="btn btn-primary"><span class="mdi mdi-draw"></span> Draw</label>
-                        <input type="radio" class="btn-check" id="fill" name="draw-mode" value="fill">
-                        <label for="fill" class="btn btn-primary"><span class="mdi mdi-format-color-fill"></span> Fill</label>
-                        <button class="btn btn-primary" id="clear-btn" onclick="clearAll('#000000');"><span class="mdi mdi-trash-can-outline"></span> Clear All</button>
+                        <button type="button" class="btn btn-primary" id="btnUndo" onclick="undo();">
+                            <span class="mdi mdi-undo"></span> Undo</button>
+                        <button type="button" class="btn btn-primary" id="btnRedo" onclick="redo();">
+                            <span class="mdi mdi-redo"></span> Redo</button>
+                    </div>
+                </div>
+
+                <div class="col-auto">
+                    <div class="btn-group">
+                        <input type="radio" class="btn-check" id="draw" name="draw-mode" value="draw" checked><label for="draw" class="btn btn-primary"><span class="mdi mdi-draw"></span> Draw</label>
+                        <input type="radio" class="btn-check" id="fill" name="draw-mode" value="fill"><label for="fill" class="btn btn-primary"><span class="mdi mdi-format-color-fill"></span> Fill</label>
+                    </div>
+                    <button class="btn btn-primary" id="clear-btn" onclick="clearAll('#000000');"><span class="mdi mdi-trash-can-outline"></span> Clear All</button>
+                </div>
+                <div class="col-auto">
+                    <div class="btn-group">
+                        <!--<input type="radio" class="btn-check" id="draw-full" name="draw-color" value="1" checked><label for="draw-full" class="btn btn-primary"><span class="mdi mdi-water"></span> White</label>-->
+                        <input type="radio" class="btn-check" id="draw-white" name="draw-color" value="1" checked><label for="draw-white" class="btn btn-white"><span class="mdi mdi-water"></span> White</label>
+                        <input type="radio" class="btn-check" id="draw-lightGrey" name="draw-color" value="0.7"><label for="draw-lightGrey" class="btn btn-light-grey"><span class="mdi mdi-water-opacity"></span> Light Grey</label>
+                        <input type="radio" class="btn-check" id="draw-darkGrey" name="draw-color" value="0.5"><label for="draw-darkGrey" class="btn btn-dark-grey"><span class="mdi mdi-water-opacity"></span> Dark Grey</label>
+                        <input type="radio" class="btn-check" id="draw-black" name="draw-color" value="0"><label for="draw-black" class="btn btn-black"><span class="mdi mdi-water-outline"></span> Black</label>
+                        <!--<input type="radio" class="btn-check" id="draw-clear" name="draw-color" value="0"><label for="draw-clear" class="btn btn-primary"><span class="mdi mdi-water-outline"></span> Off</label>-->
                     </div>
                 </div>
                 <div class="col-auto">
                     <div class="btn-group">
-                        <input type="radio" class="btn-check" id="draw-full" name="draw-color" value="1" checked>
-                        <label for="draw-full" class="btn btn-primary"><span class="mdi mdi-water"></span> White</label>
-                        <input type="radio" class="btn-check" id="draw-transparent" name="draw-color" value="0.5">
-                        <label for="draw-transparent" class="btn btn-primary"><span class="mdi mdi-water-opacity"></span> Grey</label>
-                        <input type="radio" class="btn-check" id="draw-black" name="draw-color" value="0">
-                        <label for="draw-black" class="btn btn-primary"><span class="mdi mdi-water-opacity"></span> Black</label>
+                        <button id="btnInvertBW" class="btn btn-primary text-dark" onclick="invertAll();"><span class="mdi mdi-invert-colors"></span> Invert White/Black</button>
+                        <button id="btnInvertGreys" class="btn btn-primary" onclick="invertGreys();"><span class="mdi mdi-invert-colors"></span> Invert Greys</button>
+                        <div class="btn-group dropdown">
+                            <a class="btn btn-primary dropdown-toggle" id="ddMirror" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="mdi mdi-flip-to-front"></span> Mirror
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" id="btnMirrorHorizontal" href="#" onclick="mirrorHorizontal();">
+                                    <span class="mdi mdi-flip-horizontal"></span> Mirror Horizontal
+                                </a></li>
+                                <li><a class="dropdown-item" id="btnMirrorVertical" href="#" onclick="mirrorVertical();">
+                                    <span class="mdi mdi-flip-vertical"></span> Mirror Vertical
+                                </a></li>
+                            </ul>
+                        </div>
+                        <div class="btn-group dropdown">
+                            <a class="btn btn-primary dropdown-toggle" id="ddFlip" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="mdi mdi-rotate-orbit"></span> Flip
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" id="btnFlipHorizontal" href="#" onclick="flip('horizontal');">
+                                    <span class="mdi mdi-horizontal-rotate-clockwise"></span> Flip Horizontal
+                                </a></li>
+                                <li><a class="dropdown-item" id="btnFlipVertical" href="#" onclick="flip('vertical');">
+                                    <span class="mdi mdi-axis-z-rotate-clockwise"></span> Flip Vertical
+                                </a></li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-                <div class="col-auto">
-                    <button id="invert-btn" class="btn btn-primary" onclick="invertAll();"><span class="mdi mdi-invert-colors"></span> Invert</button>
-                    <button id="horizontal-btn" class="btn btn-primary" onclick="mirrorHorizontal();"><span class="mdi mdi-flip-horizontal"></span> Mirror Horizontal</button>
-                    <button id="vertical-btn" class="btn btn-primary" onclick="mirrorVertical();"><span class="mdi mdi-flip-vertical"></span> Mirror Vertical</button>
-                </div>
-                <div class="col-auto">
-                    <button id="invert-btn" class="btn btn-primary" onclick="showHelp();"><span class="mdi mdi-invert-colors"></span> Help</button>
                 </div>
             </div>
         </section>
@@ -194,67 +319,123 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <label for="txt-share-author" class="form-label">Who are you?</label>
-                            <input id="txt-share-author" type="text" class="form-control" placeholder="John Smith"
-                                maxlength="25" />
-                        </div>
-                    </div>
                     <div class="row">
                         <div class="col-12">
-                            <label for="txt-share-name" class="form-label">What would you like to call this pixel
+                            <label for="txtShareName" class="form-label">What would you like to call this pixel
                                 art?</label>
-                            <input id="txt-share-name" type="text" class="form-control" placeholder="my cool pixel art"
+                            <input id="txtShareName" type="text" class="form-control" placeholder="my cool pixel art"
                                 maxlength="50" />
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="share-confirm-btn">Submit</button>
+                    <button type="button" class="btn btn-primary" id="btnShareConfirm">Submit</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" id="modal-info" tabindex="-1" aria-labelledby="modal-info-label" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal fade" id="modal-update" tabindex="-1" aria-labelledby="modal-update-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="modal-info-label">Item</h1>
+                    <h1 class="modal-title fs-5" id="modal-update-label">Update pixel art</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="txtUpdateName" class="form-label">What would you like to call this pixel
+                                art?</label>
+                            <input id="txtUpdateName" type="text" class="form-control" placeholder="my cool pixel art"
+                                maxlength="50" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnUpdateConfirm">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-signup" tabindex="-1" aria-labelledby="modal-signup-label" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modal-signup-label">Sign Up</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row mb-3">
-                        <div class="col-lg-6 col-md-12 mb-lg-0 mb-3">
-                            <label for="txtInfoName" class="form-label">Name</label>
-                            <input id="txtInfoName" type="text" class="form-control" value="" disabled />
-                        </div>
-                        <div class="col-lg-6 col-md-12 mb-lg-0 mb-3">
-                            <label for="txtInfoAuthor" class="form-label">Author</label>
-                            <input id="txtInfoAuthor" type="text" class="form-control" value="" disabled />
+                        <div class="col-12">
+                            <label for="txtSignupEmail" class="form-label">Email</label>
+                            <input id="txtSignupEmail" type="text" class="form-control" placeholder="email@example.com"
+                                maxlength="100" />
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <div class="col-lg-6 col-md-12 mb-lg-0 mb-3">
-                            <label for="txtInfoDate" class="form-label">Created</label>
-                            <input id="txtInfoDate" type="datetime-local" class="form-control" value="" disabled />
+                        <div class="col-12">
+                            <label for="txtSignupUsername" class="form-label">Username</label>
+                            <input id="txtSignupUsername" type="text" class="form-control" placeholder="Username"
+                                maxlength="30" />
                         </div>
-                        <div class="col-lg-6 col-md-12 mb-lg-0 mb-3">
-                            <label for="txtInfoSize" class="form-label">Size</label>
-                            <input id="txtInfoSize" type="text" class="form-control" value="" disabled />
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="txtSignupPassword" class="form-label">Password</label>
+                            <input id="txtSignupPassword" type="password" class="form-control" placeholder="Password"
+                                maxlength="30" />
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <label for="txtInfoData" class="form-label">Code</label>
-                            <div class="input-group">
-                                <textarea id="txtInfoData" class="form-control" rows="6" disabled></textarea>
-                                <button class="btn btn-outline-secondary" type="button" id="btnInfoDataCopy"
-                                    onclick="copyToClipboard('');">Copy</button>
-                            </div>
+                            <label for="txtSignupConfirmPassword" class="form-label">Confirm Password</label>
+                            <input id="txtSignupConfirmPassword" type="password" class="form-control"
+                                placeholder="Password" maxlength="30" />
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnSignupConfirm">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal-change-password" tabindex="-1" aria-labelledby="modal-change-password-label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modal-change-password-label">Change Password</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="txtCurrentPassword" class="form-label">Current Password</label>
+                            <input id="txtCurrentPassword" type="password" class="form-control" placeholder="Password"
+                                maxlength="30" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label for="txtNewPassword" class="form-label">New Password</label>
+                            <input id="txtNewPassword" type="password" class="form-control" placeholder="Password"
+                                maxlength="30" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="txtConfirmNewPassword" class="form-label">Confirm Password</label>
+                            <input id="txtConfirmNewPassword" type="password" class="form-control"
+                                placeholder="Password" maxlength="30" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnChangePasswordConfirm">Submit</button>
                 </div>
             </div>
         </div>
@@ -332,6 +513,11 @@
 
         </div>
     </div>
+    
+    <script src="script.js"></script>
+
+    <!-- History Manager -->
+    <script src="history_manager.js"></script>
 
     <script>
         //const api = 'http://localhost:3001/api/';
@@ -344,187 +530,34 @@
             }
         });
 
-        const langDB = {
-            language: { en: '<span class="mdi mdi-translate"></span> Language', zh: '<span class="mdi mdi-translate"></span> 语言' },
-            header: { en: "SignalRGB WLED/Nollie1 Matrix Pixel Art Painter", zh: "SignalRGB WLED/Nollie1 像素屏画家" },
-            size: { en: '<span class="mdi mdi-image-size-select-small"></span> Size', zh: '<span class="mdi mdi-image-size-select-small"></span> 大小' },
-            import: { en: '<span class="mdi mdi-import"></span> Import', zh: '<span class="mdi mdi-import"></span> 导入' },
-            export: { en: '<span class="mdi mdi-export"></span> Export', zh: '<span class="mdi mdi-export"></span> 导出' },
-            draw: { en: '<span class="mdi mdi-draw"></span> Draw', zh: '<span class="mdi mdi-draw"></span> 绘画模式' },
-            fill: { en: '<span class="mdi mdi-format-color-fill"></span> Fill', zh: '<span class="mdi mdi-format-color-fill"></span> 填充模式' },
-            erase: { en: '<span class="mdi mdi-eraser"></span> Erase', zh: '<span class="mdi mdi-eraser"></span> 擦除模式' },
-            clear: { en: '<span class="mdi mdi-trash-can-outline"></span> Clear All', zh: '<span class="mdi mdi-trash-can-outline"></span> 清除全部' },
-            invert: { en: '<span class="mdi mdi-invert-colors"></span> Invert', zh: '<span class="mdi mdi-invert-colors"></span> 反转' },
-            horizontal: { en: '<span class="mdi mdi-flip-horizontal"></span> Mirror Horizontal', zh: '<span class="mdi mdi-flip-horizontal"></span> 水平镜像' },
-            vertical: { en: '<span class="mdi mdi-flip-vertical"></span> Mirror Vertical', zh: '<span class="mdi mdi-flip-vertical"></span> 垂直镜像' },
-            position1: { en: 'Position: (-1, -1)', zh: '位置: (-1, -1)' },
-            cellsize1: { en: 'Cell Size: 0x0', zh: '像元大小: 34x34' },
-            position2: { en: 'Position:', zh: '位置:' },
-            cellsize2: { en: 'Cell Size:', zh: '像元大小:' },
-            copycode: { en: 'Copy the code below into SignalRGB', zh: '将以下代码复制到SignalRGB' },
-            copy: { en: 'Copy', zh: '复制' },
-            ok: { en: 'OK', zh: '确认' },
-            copied: { en: 'Code copied to clipboard.', zh: '代码已复制到剪贴板。' },
-            load: { en: '<span class="mdi mdi-cloud-outline"></span> Load', zh: '<span class="mdi mdi-cloud-outline"></span> 载入' },
-            save: { en: '<span class="mdi mdi-content-save-outline"></span> Save', zh: '<span class="mdi mdi-content-save-outline"></span> 保存' },
-            saveTitle: { en: 'Save pixel art', zh: '保存像素屏' },
-            saveSubtitle: { en: 'What would you like to call this pixel art?', zh: '您想将这个像素艺术存档命名为什么？' },
-            submit: { en: 'Submit', zh: '提交' },
-            loadTitle: { en: 'Load pixel art', zh: '载入像素屏' },
-            loadSubtitle: { en: 'Which pixel art would you like load?', zh: '您想要加载哪一个像素存档？' },
-            saved: { en: 'Pixel art saved.', zh: '像素存档保存成功。' },
-            remove: { en: 'Remove', zh: '删除' },
-            pleaseSelect: { en: 'Please select...', zh: '请选择...' },
-            errorParsingJson: { en: 'Error parsing JSON data.', zh: '解析 JSON 数据时出错。' },
-            oops: { en: 'Oops...', zh: '卧艹...' },
-            community: { en: '<span class="mdi mdi-account-group-outline"></span> Community Pixel Art', zh: '<span class="mdi mdi-account-group-outline"></span> 社区像素作品' },
-            share: { en: '<span class="mdi mdi-share-variant-outline"></span> Share', zh: '<span class="mdi mdi-share-variant-outline"></span> 分享' },
-            shareTitle: { en: 'Share pixel art', zh: '分享作品' },
-            shareAuthor: { en: 'Who are you?', zh: '你是谁？' },
-            shared: { en: 'The pixel artwork has been shared successfully.', zh: '像素作品已成功分享。' },
-            communityTitle: { en: 'Browse Community Pixel Art', zh: '浏览社区像素作品' },
-            search: { en: 'Search...', zh: '搜索...' },
-            itemExists: { en: 'The pixel art you are trying to share already exists on the server.', zh: '您尝试分享的像素作品已存在于服务器中。' },
-            latest: { en: '<span class="mdi mdi-fire"></span> Latest', zh: '<span class="mdi mdi-fire"></span> 最新' },
-            search2: { en: '<span class="mdi mdi-magnify"></span> Search', zh: '<span class="mdi mdi-magnify"></span> 搜索' },
-            loadMore: { en: '<span class="mdi mdi-plus"></span> Load More', zh: '<span class="mdi mdi-plus"></span> 加载更多' },
-            favorites: { en: '<span class="mdi mdi-heart-outline"></span> Favorites', zh: '<span class="mdi mdi-heart-outline"></span> 收藏夹' },
-            infoName: { en: 'Name', zh: '名字' },
-            infoAuthor: { en: 'Author', zh: '作者' },
-            infoCreated: { en: 'Created', zh: '提交时间' },
-            infoSize: { en: 'Size', zh: '大小' },
-            infoCode: { en: 'Code', zh: '代码' },
-            colorFull: { en: '<span class="mdi mdi-water"></span> White', zh: '<span class="mdi mdi-water"></span> 全色' },
-            colorTransparent: { en: '<span class="mdi mdi-water-opacity"></span> Grey', zh: '<span class="mdi mdi-water-opacity"></span> 透明' },
-            colorBlack: { en: '<span class="mdi mdi-water-opacity"></span> Black', zh: '<span class="mdi mdi-water-opacity"></span> 黑色的' }
-        };
-
         var favorites = [];
 
         $(document).ready(function () {
+            let loggedIn = { username: sessionStorage.getItem('username') || null, userid: sessionStorage.getItem('id') || null };
+            if (loggedIn.userid != null && loggedIn.username != null) loginUser(loggedIn.userid, loggedIn.username);
+
+            let remember = localStorage.getItem('remember') || false;
             let language = localStorage.getItem('language') || 'english';
-            let author = localStorage.getItem('author') || null;
             favorites = JSON.parse(localStorage.getItem('favorites')) || [];
 
             $('body').attr('data-language', language);
-            $('#txt-share-author').val(author);
+            if (remember) {
+                $('#txtLoginUsername').val(localStorage.getItem('username'));
+                $('#txtLoginPassword').val(localStorage.getItem('password'));
+                $('#chkLoginRemember').prop('checked', true);
+            }
             changeLanguage(language);
         });
 
-        function changeLanguage(lang) {
-            localStorage.setItem('language', lang);
-
-            switch (lang) {
-                case 'chinese':
-                    $('#ddLanguage').html(langDB.language.zh);
-                    $('.navbar-brand strong').text(langDB.header.zh);
-                    document.title = langDB.header.zh;
-                    $('#size-label').html(langDB.size.zh);
-                    $('#import-btn').html(langDB.import.zh);
-                    $('#export-btn').html(langDB.export.zh);
-                    $('#load-btn').html(langDB.load.zh);
-                    $('#save-btn').html(langDB.save.zh);
-                    $('label[for="draw"]').html(langDB.draw.zh);
-                    $('label[for="fill"]').html(langDB.fill.zh);
-                    $('label[for="clear"]').html(langDB.erase.zh);
-                    $('#clear-btn').html(langDB.clear.zh);
-                    $('#invert-btn').html(langDB.invert.zh);
-                    $('#horizontal-btn').html(langDB.horizontal.zh);
-                    $('#vertical-btn').html(langDB.vertical.zh);
-                    $('#mouse-pos').text(langDB.position1.zh);
-                    $('#cell-size').text(langDB.cellsize1.zh);
-                    $('#modal-save-label').text(langDB.saveTitle.zh);
-                    $('label[for="txt-save"], label[for="txt-share-name"]').text(langDB.saveSubtitle.zh);
-                    $('#save-confirm-btn, #share-confirm-btn, #load-confirm-btn').text(langDB.submit.zh);
-                    $('#modal-load-label').text(langDB.loadTitle.zh);
-                    $('label[for="select-load"]').text(langDB.loadSubtitle.zh);
-                    $('#remove-confirm-btn').text(langDB.remove.zh);
-                    $('#community-btn').html(langDB.community.zh);
-                    $('#share-btn').html(langDB.share.zh);
-                    $('#modal-share-label').text(langDB.shareTitle.zh);
-                    $('label[for="txt-share-author"]').text(langDB.shareAuthor.zh);
-                    $('#community-Label').text(langDB.communityTitle.zh);
-                    $('#txt-search').attr('placeholder', langDB.search.zh);
-                    $('#new-items-tab').html(langDB.latest.zh);
-                    $('#search-items-tab').html(langDB.search2.zh);
-                    $('#community-load-more-btn, #search-load-more-btn, #favorites-load-more-btn').html(langDB.loadMore.zh);
-                    $('#favorites-items-tab').html(langDB.favorites.zh);
-                    $('label[for="txtInfoName"]').text(langDB.infoName.zh);
-                    $('label[for="txtInfoAuthor"]').text(langDB.infoAuthor.zh);
-                    $('label[for="txtInfoDate"]').text(langDB.infoCreated.zh);
-                    $('label[for="txtInfoSize"]').text(langDB.infoSize.zh);
-                    $('label[for="txtInfoData"]').text(langDB.infoCode.zh);
-                    $('#btnInfoDataCopy').text(langDB.copy.zh);
-                    $('label[for="draw-full"]').html(langDB.colorFull.zh);
-                    $('label[for="draw-transparent"]').html(langDB.colorTransparent.zh);
-                    $('label[for="draw-black"]').html(langDB.colorBlack.zh);
-                    break;
-                default:
-                    $('#ddLanguage').html(langDB.language.en);
-                    $('.navbar-brand strong').text(langDB.header.en);
-                    document.title = langDB.header.en;
-                    $('#size-label').html(langDB.size.en);
-                    $('#import-btn').html(langDB.import.en);
-                    $('#export-btn').html(langDB.export.en);
-                    $('#load-btn').html(langDB.load.en);
-                    $('#save-btn').html(langDB.save.en);
-                    $('label[for="draw"]').html(langDB.draw.en);
-                    $('label[for="fill"]').html(langDB.fill.en);
-                    $('label[for="clear"]').html(langDB.erase.en);
-                    $('#clear-btn').html(langDB.clear.en);
-                    $('#invert-btn').html(langDB.invert.en);
-                    $('#horizontal-btn').html(langDB.horizontal.en);
-                    $('#vertical-btn').html(langDB.vertical.en);
-                    $('#mouse-pos').text(langDB.position1.en);
-                    $('#cell-size').text(langDB.cellsize1.en);
-                    $('#modal-save-label').text(langDB.saveTitle.en);
-                    $('label[for="txt-save"], label[for="txt-share-name"]').text(langDB.saveSubtitle.en);
-                    $('#save-confirm-btn, #share-confirm-btn, #load-confirm-btn').text(langDB.submit.en);
-                    $('#modal-load-label').text(langDB.loadTitle.en);
-                    $('label[for="select-load"]').text(langDB.loadSubtitle.en);
-                    $('#remove-confirm-btn').text(langDB.remove.en);
-                    $('#community-btn').html(langDB.community.en);
-                    $('#share-btn').html(langDB.share.en);
-                    $('#modal-share-label').text(langDB.shareTitle.en);
-                    $('label[for="txt-share-author"]').text(langDB.shareAuthor.en);
-                    $('#community-Label').text(langDB.communityTitle.en);
-                    $('#txt-search').attr('placeholder', langDB.search.en);
-                    $('#new-items-tab').html(langDB.latest.en);
-                    $('#search-items-tab').html(langDB.search2.en);
-                    $('#community-load-more-btn, #search-load-more-btn, #favorites-load-more-btn').html(langDB.loadMore.en);
-                    $('#favorites-items-tab').html(langDB.favorites.en);
-                    $('label[for="txtInfoName"]').text(langDB.infoName.en);
-                    $('label[for="txtInfoAuthor"]').text(langDB.infoAuthor.en);
-                    $('label[for="txtInfoDate"]').text(langDB.infoCreated.en);
-                    $('label[for="txtInfoSize"]').text(langDB.infoSize.en);
-                    $('label[for="txtInfoData"]').text(langDB.infoCode.en);
-                    $('#btnInfoDataCopy').text(langDB.copy.en);
-                    $('label[for="draw-full"]').html(langDB.colorFull.en);
-                    $('label[for="draw-transparent"]').html(langDB.colorTransparent.en);
-                    $('label[for="draw-black"]').html(langDB.colorBlack.en);
-            }
-
-            $('body').attr('data-language', lang);
-        };
-
-        function getCorrectTranslation(lang) {
-            let body = $('body').attr('data-language');
-            switch (body) {
-                case 'chinese':
-                    return langDB[lang].zh
-                    break;
-                default:
-                    return langDB[lang].en
-            }
-            return null;
-        }
+        const naughtyWords = ['`', '"', "'", 'fuck', 'bastard', 'bitch', 'shit', 'damn', 'arse', 'asshole', 'cock', 'cunt', 'crap',
+            'dick', 'dumb', 'fag', 'nigga', 'piss', 'slut', 'wanker', 'ccp', '共产党', '傻逼', '维尼', 'pooh', '西藏', '防火墙', '天安门'];
 
         $('#size-cols, #size-rows').on('input', function (e) {
             COLS = parseInt($('#size-cols').val());
             ROWS = parseInt($('#size-rows').val());
 
             matrixData = Array(ROWS).fill().map(() => Array(COLS).fill('#000000'));
-
+            canvasHistory.clear(matrixData);
             resizeCanvas();
         });
 
@@ -556,7 +589,8 @@
             }
             try {
                 matrixData = JSON.parse($('#clipboard').val());
-                matrixData = matrixData.map(row => row.map(value => (value === 0) ? "#000000" : (value === 1) ? "#ffffff" : "#505050"));
+                matrixData = matrixData.map(row =>row.map(color => colorMap[color] ?? color));
+                canvasHistory.saveState(matrixData);
                 drawMatrix();
             } catch (e) {
                 console.log(e);
@@ -587,6 +621,7 @@
                 $('#select-load').addClass('is-invalid');
             } else {
                 try {
+                    canvasHistory.saveState(matrixData);
                     var $select = $('#select-load option:selected');
 
                     COLS = parseInt($select.data('size')[0]);
@@ -596,7 +631,8 @@
                     resizeCanvas();
 
                     matrixData = JSON.parse($select.val());
-                    matrixData = matrixData.map(row => row.map(value => (value === 0) ? "#000000" : (value === 1) ? "#ffffff" : "#505050"));
+                    matrixData = matrixData.map(row =>row.map(color => colorMap[color] ?? color));
+                    canvasHistory.saveState(matrixData);
                     drawMatrix();
 
                     $('#size-cols').val(COLS);
@@ -620,8 +656,18 @@
         $('#save-confirm-btn').click(function (evt) {
             if (!$('#txt-save').val()) {
                 $('#txt-save').addClass('is-invalid');
+                $('#txt-save').focus();
+            } else if (naughtyWords.includes($('#txt-save').val())) {
+                $('#txt-save').addClass('is-invalid');
+                $('#txt-save').focus();
+                swalBS.fire({
+                    icon: "error",
+                    title: getCorrectTranslation('oops'),
+                    theme: "dark",
+                    text: getCorrectTranslation('inappropriateTextWarning'),
+                });
             } else {
-                const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#505050"', '0.5');
+                const dataStr = JSON.stringify(matrixData).replaceAll(white, whiteValue).replaceAll(black, blackValue).replaceAll(darkGrey, darkGreyValue).replaceAll(lightGrey, lightGreyValue);
                 const name = $('#txt-save').val();
                 const obj = { name: name, size: [parseInt($('#size-cols').val()), parseInt($('#size-rows').val())], data: dataStr };
                 localStorage.setItem(`item-${name}`, JSON.stringify(obj));
@@ -644,7 +690,7 @@
         function reloadSavedPixelArt() {
             $('#select-load').find('optgroup').remove();
             $('#select-load').find('option').remove().end().append($('<option></option>').val('null').prop('disabled', true).prop('selected', true).html(getCorrectTranslation('pleaseSelect')));
-            var values = stringifyLocalStorageExcept(['language', 'author', 'favorites']);
+            var values = stringifyLocalStorageExcept(['language', 'username', 'password', 'remember', 'favorites']);
             $.each(values, function (key, item) {
                 $('#select-load').append($(`<option data-size="[${item.size}]" data-group="${item.size[0]}x${item.size[1]}" value="${item.data}">${item.name}</option>`).val(item.data).html(item.name));
             });
@@ -673,10 +719,10 @@
                 }
             }
             return filtered;
-        }
+        };
 
         function appendPlaceholders(count) {
-            var placeholder = `<div class="col-sm-6 col-md-4 col-lg-2 mb-4 d-flex">
+            var placeholder = `<div class="col-sm-6 col-md-4 col-lg-2 mb-4 d-flex placeholder-item">
                                     <div class="card" aria-hidden="true">
                                         <svg class="bd-placeholder-img card-img-top" width="100%" height="180"
                                             xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder"
@@ -693,9 +739,9 @@
                                                 <button type="button"
                                                     class="btn btn-sm btn-primary disabled placeholder col-3"></button>
                                                 <button type="button"
-                                                    class="btn btn-sm btn-secondary disabled placeholder col-3"></button>
-                                                <button type="button"
                                                     class="btn btn-sm btn-danger disabled placeholder col-3"></button>
+                                                <button type="button"
+                                                    class="btn btn-sm btn-secondary disabled placeholder col-3"></button>
                                             </div>
                                         </div>
                                     </div>
@@ -704,11 +750,51 @@
             return duplicate;
         }
 
+        function generateItem(id, preview, name, author) {
+            let isFavorite = favorites.includes(id);
+            var dropdown = '';
+            if (author === sessionStorage.getItem('username')) {
+                dropdown = `<div class="btn-group btn-group-sm">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#" onclick="downloadItem(${id}, true);">${getCorrectTranslation('edit')}</a></li>
+                                    <li><a class="dropdown-item remove-item" href="#" data-id="${id}"">${getCorrectTranslation('remove')}</a></li>
+                                </ul>
+                            </div>`;
+            }
+
+            var item = `<div class="col-sm-6 col-md-4 col-lg-2 mb-4 d-flex align-items-stretch generated-item">
+                            <div class="card shadow-sm">
+                                <img src="${preview}" class="image-fluid card-img-top" />
+                                <div class="card-body">
+                                    <p class="card-text">${name}</p>
+                                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="downloadItem(${id});">
+                                                <span class="mdi mdi-download"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-sm ${isFavorite ? 'btn-danger' : 'btn-outline-danger'}" onclick="addToFavorite(${id});">
+                                                <span class="mdi mdi-heart"></span>
+                                            </button>
+                                            ${dropdown}
+                                        </div>
+                                        <small class="text-muted">${author}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+            return item;
+        }
+
         function searchCommunityItems(search_string, page = 0) {
-            if (page === 0) $('#community-search-container').empty().append(appendPlaceholders(Math.random() * 30));
+            if (page === 0) {
+                $('#community-search-container').empty().append(appendPlaceholders(Math.random() * 20));
+            } else {
+                $('#community-search-container').append(appendPlaceholders(Math.random() * 20));
+            }
 
             $.ajax({
-                url: `${api}search/${search_string}/${page}`,
+                url: `${api}searchitem/${search_string}/${page}`,
                 type: 'GET',
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
@@ -720,32 +806,11 @@
                         var children = [];
 
                         $.each(response.data, function (key, item) {
-                            let isFavorite = favorites.includes(item.id);
-                            var child = `<div class="col-sm-6 col-md-4 col-lg-2 mb-4 d-flex align-items-stretch">` +
-                                `<div class="card shadow-sm">` +
-                                `<img src="${item.preview}" class="image-fluid card-img-top" />` +
-                                `<div class="card-body">` +
-                                `<p class="card-text">${item.name}</p>` +
-                                `<div class="d-flex justify-content-between align-items-center mt-auto">` +
-                                `<div class="btn-group" role="group">` +
-                                `<button type="button" class="btn btn-sm btn-outline-primary" onclick="downloadItem(${item.id});">` +
-                                `<span class="mdi mdi-download"></span>` +
-                                `</button>` +
-                                `<button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal-info" onclick="itemInfo(${item.id});">` +
-                                `<span class="mdi mdi-dots-horizontal"></span>` +
-                                `</button>` +
-                                `<button type="button" class="btn btn-sm ${isFavorite ? 'btn-danger' : 'btn-outline-danger'}" onclick="addToFavorite(${item.id});">` +
-                                `<span class="mdi mdi-heart"></span>` +
-                                `</button>` +
-                                `</div>` +
-                                `<small class="text-muted">${item.author}</small>` +
-                                `</div>` +
-                                `</div>` +
-                                `</div>` +
-                                `</div>`;
+                            var child = generateItem(item.id, item.preview, item.name, item.author);
                             children.push(child);
                         });
 
+                        $('#community-search-container').find('.placeholder-item').remove();
                         $('#community-search-container').append(children);
                         if (response.pagination.hasMore) {
                             $('#search-load-more-btn').attr('data-page', response.pagination.nextPage);
@@ -756,6 +821,7 @@
                     }
                 },
                 error: function (err) {
+                    $('#community-search-container').find('.placeholder-item').remove();
                     console.log(err);
                     swalBS.fire({
                         icon: "error",
@@ -787,8 +853,12 @@
         });
 
         function getCommunityItems(page = 0) {
-            if (page === 0) $('#community-container').empty().append(appendPlaceholders(Math.random() * 30));
-            
+            if (page === 0) {
+                $('#community-container').empty().append(appendPlaceholders(Math.random() * 20));
+            } else {
+                $('#community-container').append(appendPlaceholders(Math.random() * 20));
+            }
+
             $.ajax({
                 url: `${api}allitems/${page}`,
                 type: 'GET',
@@ -800,32 +870,11 @@
                         var children = [];
 
                         $.each(response.data, function (key, item) {
-                            let isFavorite = favorites.includes(item.id);
-                            var child = `<div class="col-sm-6 col-md-4 col-lg-2 mb-4 d-flex align-items-stretch">` +
-                                `<div class="card shadow-sm">` +
-                                `<img src="${item.preview}" class="image-fluid card-img-top" />` +
-                                `<div class="card-body">` +
-                                `<p class="card-text">${item.name}</p>` +
-                                `<div class="d-flex justify-content-between align-items-center mt-auto">` +
-                                `<div class="btn-group" role="group">` +
-                                `<button type="button" class="btn btn-sm btn-outline-primary" onclick="downloadItem(${item.id});">` +
-                                `<span class="mdi mdi-download"></span>` +
-                                `</button>` +
-                                `<button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal-info" onclick="itemInfo(${item.id});">` +
-                                `<span class="mdi mdi-dots-horizontal"></span>` +
-                                `</button>` +
-                                `<button type="button" class="btn btn-sm ${isFavorite ? 'btn-danger' : 'btn-outline-danger'}" onclick="addToFavorite(${item.id});">` +
-                                `<span class="mdi mdi-heart"></span>` +
-                                `</button>` +
-                                `</div>` +
-                                `<small class="text-muted">${item.author}</small>` +
-                                `</div>` +
-                                `</div>` +
-                                `</div>` +
-                                `</div>`;
+                            var child = generateItem(item.id, item.preview, item.name, item.author);
                             children.push(child);
                         });
 
+                        $('#community-container').find('.placeholder-item').remove();
                         $('#community-container').append(children);
                         if (response.pagination.hasMore) {
                             $('#community-load-more-btn').attr('data-page', response.pagination.nextPage);
@@ -836,6 +885,7 @@
                     }
                 },
                 error: function (err) {
+                    $('#community-container').find('.placeholder-item').remove();
                     console.log(err);
                     swalBS.fire({
                         icon: "error",
@@ -848,7 +898,11 @@
         }
 
         function getFavoritesCommunityItems(page = 0) {
-            if (page === 0) $('#community-favorites-container').empty().append(appendPlaceholders(Math.random() * 30));
+            if (page === 0) {
+                $('#community-favorites-container').empty().append(appendPlaceholders(Math.random() * 20));
+            } else {
+                $('#community-favorites-container').append(appendPlaceholders(Math.random() * 20));
+            }
 
             $.ajax({
                 url: `${api}items/${JSON.stringify(favorites)}/${page}`,
@@ -861,32 +915,11 @@
                         var children = [];
 
                         $.each(response.data, function (key, item) {
-                            let isFavorite = favorites.includes(item.id);
-                            var child = `<div class="col-sm-6 col-md-4 col-lg-2 mb-4 d-flex align-items-stretch">` +
-                                `<div class="card shadow-sm">` +
-                                `<img src="${item.preview}" class="image-fluid card-img-top" />` +
-                                `<div class="card-body">` +
-                                `<p class="card-text">${item.name}</p>` +
-                                `<div class="d-flex justify-content-between align-items-center mt-auto">` +
-                                `<div class="btn-group" role="group">` +
-                                `<button type="button" class="btn btn-sm btn-outline-primary" onclick="downloadItem(${item.id});">` +
-                                `<span class="mdi mdi-download"></span>` +
-                                `</button>` +
-                                `<button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modal-info" onclick="itemInfo(${item.id});">` +
-                                `<span class="mdi mdi-dots-horizontal"></span>` +
-                                `</button>` +
-                                `<button type="button" class="btn btn-sm ${isFavorite ? 'btn-danger' : 'btn-outline-danger'}" onclick="addToFavorite(${item.id});">` +
-                                `<span class="mdi mdi-heart"></span>` +
-                                `</button>` +
-                                `</div>` +
-                                `<small class="text-muted">${item.author}</small>` +
-                                `</div>` +
-                                `</div>` +
-                                `</div>` +
-                                `</div>`;
+                            var child = generateItem(item.id, item.preview, item.name, item.author);
                             children.push(child);
                         });
 
+                        $('#community-favorites-container').find('.placeholder-item').remove();
                         $('#community-favorites-container').append(children);
                         if (response.pagination.hasMore) {
                             $('#favorites-load-more-btn').attr('data-page', response.pagination.nextPage);
@@ -897,6 +930,7 @@
                     }
                 },
                 error: function (err) {
+                    $('#community-favorites-container').find('.placeholder-item').remove();
                     console.log(err);
                     swalBS.fire({
                         icon: "error",
@@ -910,26 +944,106 @@
 
         function canvasToBase64() {
             var canvas = $('#matrix-canvas')[0]; // Get the DOM element
-            var base64String = canvas.toDataURL('image/png', 0.1); // Default is PNG format
+            resizeCanvas(true);
+            var base64String = canvas.toDataURL('image/jpeg', 0.5); // Default is PNG format
             return base64String;
         }
 
-        $('#share-confirm-btn').click(function (evt) {
-            if (!$('#txt-share-author').val()) {
-                $('#txt-share-author').addClass('is-invalid');
-            } else if (!$('#txt-share-name').val()) {
-                $('#txt-share-name').addClass('is-invalid');
+        $('#btnUpdateConfirm').click(function (evt) {
+            if (!$('#txtUpdateName').val()) {
+                $('#txtUpdateName').addClass('is-invalid');
+                $('#txtUpdateName').focus();
+            } else if (naughtyWords.includes($('#txtUpdateName').val())) {
+                $('#txtUpdateName').addClass('is-invalid');
+                $('#txtUpdateName').focus();
+                swalBS.fire({
+                    icon: "error",
+                    title: getCorrectTranslation('oops'),
+                    theme: "dark",
+                    text: getCorrectTranslation('inappropriateTextWarning'),
+                });
             } else {
-                const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#505050"', '0.5');
+                const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#808080"', '0.5');
                 var json = {
-                    author: $('#txt-share-author').val(),
-                    name: $('#txt-share-name').val(),
+                    author: sessionStorage.getItem('username'),
+                    name: $('#txtUpdateName').val(),
                     size: [parseInt($('#size-cols').val()), parseInt($('#size-rows').val())],
                     data: dataStr,
                     preview: canvasToBase64()
                 };
                 var jsonData = JSON.stringify(json);
+                var updateId = parseInt($('#txtUpdateId').val());
+                $.ajax({
+                    url: `${api}updateitem/${updateId}`,
+                    type: 'POST',
+                    data: jsonData,
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success === true) {
+                            swalBS.fire({
+                                position: "top-end",
+                                icon: "success",
+                                theme: "dark",
+                                title: getCorrectTranslation('updated'),
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
 
+                            $('#txtUpdateName').val('');
+                            if ($('#txtUpdateName').hasClass('is-invalid')) $('#txtUpdateName').removeClass('is-invalid');
+
+                            $('#modal-update').modal('hide');
+
+                            $('#editItem').css('display', 'none');
+                            $('#txtUpdateId').val('-1');
+                            $('#btnShare').prop('disabled', false);
+                        } else {
+                            swalBS.fire({
+                                icon: "error",
+                                title: getCorrectTranslation('oops'),
+                                theme: "dark",
+                                text: getCorrectTranslation('itemExists'),
+                            });
+                        }
+                    },
+                    error: function (err) {
+                        swalBS.fire({
+                            icon: "error",
+                            title: getCorrectTranslation('oops'),
+                            theme: "dark",
+                            text: err.statusText,
+                        });
+                    }
+                });
+            }
+
+            resizeCanvas();
+        });
+
+        $('#btnShareConfirm').click(function (evt) {
+            if (!$('#txtShareName').val()) {
+                $('#txtShareName').addClass('is-invalid');
+                $('#txtShareName').focus();
+            } else if (naughtyWords.includes($('#txtShareName').val())) {
+                $('#txtShareName').addClass('is-invalid');
+                $('#txtShareName').focus();
+                swalBS.fire({
+                    icon: "error",
+                    title: getCorrectTranslation('oops'),
+                    theme: "dark",
+                    text: getCorrectTranslation('inappropriateTextWarning'),
+                });
+            } else {
+                const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#808080"', '0.5');
+                var json = {
+                    author: sessionStorage.getItem('username'),
+                    name: $('#txtShareName').val(),
+                    size: [parseInt($('#size-cols').val()), parseInt($('#size-rows').val())],
+                    data: dataStr,
+                    preview: canvasToBase64()
+                };
+                var jsonData = JSON.stringify(json);
                 $.ajax({
                     url: `${api}items`,
                     type: 'POST',
@@ -947,11 +1061,8 @@
                                 timer: 1500
                             });
 
-                            localStorage.setItem('author', $('#txt-share-author').val());
-
-                            $('#txt-share-name').val('');
-                            if ($('#txt-share-author').hasClass('is-invalid')) $('#txt-share-author').removeClass('is-invalid');
-                            if ($('#txt-share-name').hasClass('is-invalid')) $('#txt-share-name').removeClass('is-invalid');
+                            $('#txtShareName').val('');
+                            if ($('#txtShareName').hasClass('is-invalid')) $('#txtShareName').removeClass('is-invalid');
 
                             $('#modal-share').modal('hide');
                         } else {
@@ -972,10 +1083,12 @@
                         });
                     }
                 });
+
+                resizeCanvas();
             }
         });
 
-        function downloadItem(id) {
+        function downloadItem(id, edit = false) {
             $.ajax({
                 url: `${api}item/${id}`,
                 type: 'GET',
@@ -992,13 +1105,21 @@
                         resizeCanvas();
 
                         matrixData = JSON.parse($item.data);
-                        matrixData = matrixData.map(row => row.map(value => (value === 0) ? "#000000" : (value === 1) ? "#ffffff" : "#505050"));
+                        matrixData = matrixData.map(row => row.map(value => (value === 0) ? "#000000" : (value === 1) ? "#ffffff" : "#808080"));
+                        canvasHistory.saveState(matrixData);
                         drawMatrix();
 
                         $('#size-cols').val(COLS);
                         $('#size-rows').val(ROWS);
 
                         $('#community').offcanvas('hide');
+
+                        if (edit) {
+                            $('#editItem').css('display', 'block');
+                            $('#txtUpdateId').val(id);
+                            $('#txtUpdateName').val($item.name);
+                            $('#btnShare').prop('disabled', true);
+                        }
                     }
                 },
                 error: function (err) {
@@ -1013,67 +1134,99 @@
             });
         }
 
-        $('#txt-search').on('keydown', function (event) {
-            if (event.keyCode === 13) {
-                $('#community-search').click();
-                event.preventDefault()
+        function cancelEdit() {
+            $('#editItem').css('display', 'none');
+            $('#txtUpdateId').val('-1');
+            $('#btnShare').prop('disabled', false);
+            fillAll('#000000');
+        }
+
+        $(document).keydown(function (e) {
+            // If any div has the class '.modal.show' or '.offcanvas.show', exit early
+            if ($('div.modal.show').length > 0 || $('div.offcanvas.show').length > 0) {
+                return
             }
-        });
+
+            // Undo
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+                e.preventDefault()
+                canvasHistory.undo()
+                return
+            }
+
+            // Redo
+            if ((e.ctrlKey || e.metaKey) && e.key === 'y') {
+                e.preventDefault()
+                canvasHistory.redo()
+                return
+            }
+        })
 
         $('#community-load-more-btn').click(function (evt) {
-            getCommunityItems(parseInt($(this).attr('data-page')));
-        });
+            getCommunityItems(parseInt($(this).attr('data-page')))
+        })
 
         $('#search-load-more-btn').click(function (evt) {
-            searchCommunityItems($('#txt-search').val(), parseInt($(this).attr('data-page')));
-        });
+            searchCommunityItems($('#txt-search').val(), parseInt($(this).attr('data-page')))
+        })
 
         $('#favorites-load-more-btn').click(function (evt) {
-            getFavoritesCommunityItems($(this.attr('data-page')));
+            getFavoritesCommunityItems($(this.attr('data-page')))
         })
 
         function addToFavorite(id) {
             if (!favorites.includes(id)) {
-                favorites.push(id);
-                localStorage.setItem('favorites', JSON.stringify(favorites));
-                $(`button[onclick="addToFavorite(${id});"]`).removeClass('btn-outline-danger').addClass('btn-danger');
+                favorites.push(id)
+                localStorage.setItem('favorites', JSON.stringify(favorites))
+                $(`button[onclick="addToFavorite(${id});"]`).removeClass('btn-outline-danger').addClass('btn-danger')
             } else {
-                favorites.splice($.inArray(id, favorites), 1);
-                localStorage.setItem('favorites', JSON.stringify(favorites));
-                $(`button[onclick="addToFavorite(${id});"]`).removeClass('btn-danger').addClass('btn-outline-danger');
+                favorites.splice($.inArray(id, favorites), 1)
+                localStorage.setItem('favorites', JSON.stringify(favorites))
+                $(`button[onclick="addToFavorite(${id});"]`).removeClass('btn-danger').addClass('btn-outline-danger')
             }
         }
 
-        function itemInfo(id) {
+        function removeItem(id) {
+            var json = {
+                author: sessionStorage.getItem('username')
+            }
+            var jsonData = JSON.stringify(json)
+            var url = `${api}deleteitem/${id}`
+
             $.ajax({
-                url: `${api}item/${id}`,
-                type: 'GET',
+                url: url,
+                type: 'POST',
+                data: jsonData,
                 contentType: 'application/json; charset=utf-8',
                 dataType: 'json',
                 success: function (response) {
                     if (response.success === true) {
-                        let item = response.data;
-                        const datetimeLocal = item.submittime.slice(0, -5);
-
-                        $('#modal-info-label').text(`${item.id}: ${item.name}`);
-                        $('#txtInfoName').val(item.name);
-                        $('#txtInfoAuthor').val(item.author);
-                        $('#txtInfoSize').val(`${item.size[0]}x${item.size[1]}`);
-                        $('#txtInfoDate').val(datetimeLocal);
-                        $('#txtInfoData').val(item.data);
-                        $('#btnInfoDataCopy').attr('onclick', `copyToClipboard('${item.data}');`);
+                        swalBS.fire({
+                            position: "top-end",
+                            icon: "success",
+                            theme: "dark",
+                            title: getCorrectTranslation('removed'),
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    } else {
+                        swalBS.fire({
+                            icon: "error",
+                            title: getCorrectTranslation('oops'),
+                            theme: "dark",
+                            text: getCorrectTranslation('removeFailed'),
+                        })
                     }
                 },
                 error: function (err) {
-                    console.log(err);
                     swalBS.fire({
                         icon: "error",
                         title: getCorrectTranslation('oops'),
                         theme: "dark",
                         text: err.statusText,
-                    });
+                    })
                 }
-            });
+            })
         }
     </script>
 
@@ -1089,7 +1242,13 @@
         let cellWidth, cellHeight;
 
         // Matrix data - stores color for each cell
-        let matrixData = Array(ROWS).fill().map(() => Array(COLS).fill('#000000'));
+        let matrixData = Array(ROWS).fill().map(() => Array(COLS).fill(black));
+
+        //Wrapped matrix to hold matrix info for nudging
+        let wrappedMatrix = Array(ROWS).fill().map(() => Array(COLS).fill(black));
+
+        let canvasHistory = new HistoryManager(matrixData);
+        canvasHistory.saveState(matrixData);
 
         // Drawing state
         let isDrawing = false;
@@ -1118,7 +1277,7 @@
 
             // Redraw the matrix with the current data
             drawMatrix();
-        }
+        };
 
         // Draw the entire matrix
         function drawMatrix() {
@@ -1137,9 +1296,9 @@
                     // Draw the cell border
                     ctx.strokeStyle = '#333333';
                     ctx.strokeRect(x, y, cellWidth, cellHeight);
-                }
-            }
-        }
+                };
+            };
+        };
 
         // Convert mouse position to matrix coordinates
         function getMatrixCoords(event) {
@@ -1153,14 +1312,14 @@
             // Make sure we're within bounds
             if (col >= 0 && col < COLS && row >= 0 && row < ROWS) {
                 return { row, col };
-            }
+            };
 
             return null;
-        }
+        };
 
         // Update a cell's color
         function updateCell(row, col, color) {
-            if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+            if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {;
                 matrixData[row][col] = color;
 
                 // Redraw just this cell
@@ -1172,72 +1331,119 @@
 
                 ctx.strokeStyle = '#333333';
                 ctx.strokeRect(x, y, cellWidth, cellHeight);
-            }
-        }
+            };
+        };
+
+        // Fill all cells with a specific color
+        function clearAll(color) {
+            canvasHistory.saveState(matrixData);
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLS; col++) {;
+                    matrixData[row][col] = color;
+                };
+            };
+            drawMatrix();
+        };
 
         // Fill all contiguous cells with a specific color
         function fillAll(row, col, color) {
-            originalColor = matrixData[row][col]
-            console.log(originalColor)
-            updateCell(row, col, color)
-            if(row > 0 && matrixData[row-1][col] == originalColor) {
-                fillAll(row - 1, col, color)
-            }
-            if(row < ROWS-1 && matrixData[row + 1][col] == originalColor) {
-                fillAll(row + 1, col, color)
-            }
-            if(col>0 && matrixData[row][col - 1] == originalColor) {
-                fillAll(row, col - 1, color)
-            }
-            if(col<COLS-1 && matrixData[row][col + 1] == originalColor) {
-                fillAll(row, col + 1, color)
-            }
-            
-        }
-        
-        function clearAll(color){
-            for (let row = 0; row < ROWS; row++) {
-                for (let col = 0; col < COLS; col++) {
-                    matrixData[row][col] = color;
-                }
-            }
-            drawMatrix();
-        }
+            canvasHistory.saveState(matrixData);
+            fillAllRecursive(row, col, color);
+        };
 
-        //Invert all cells
+        function fillAllRecursive(row, col, color) {
+            originalColor = matrixData[row][col];
+            if (originalColor != color) {
+                updateCell(row, col, color);
+                if (row > 0 && matrixData[row - 1][col] == originalColor) {
+                    fillAllRecursive(row - 1, col, color);
+                };
+                if (row < ROWS - 1 && matrixData[row + 1][col] == originalColor) {
+                    fillAllRecursive(row + 1, col, color);
+                };
+                if (col > 0 && matrixData[row][col - 1] == originalColor) {
+                    fillAllRecursive(row, col - 1, color);
+                };
+                if (col < COLS - 1 && matrixData[row][col + 1] == originalColor) {
+                    fillAllRecursive(row, col + 1, color);
+                };
+            };
+        };
+
+        function undo() {
+            canvasHistory.undo();
+        };
+
+        function redo() {
+            canvasHistory.redo();
+        };
+
+       //Invert all cells
         function invertAll() {
+            canvasHistory.saveState(matrixData);
             for (let row = 0; row < ROWS; row++) {
                 for (let col = 0; col < COLS; col++) {
                     switch (matrixData[row][col]) {
-                        case '#ffffff':
-                            matrixData[row][col] = '#000000';
+                        case white:
+                            matrixData[row][col] = black;
                             break;
-                        case '#000000':
-                            matrixData[row][col] = '#ffffff';
+                        case black:
+                            matrixData[row][col] = white;
                             break;
-                    }
-                }
-            }
+                    };
+                };
+            };
             drawMatrix();
-        }
+        };
+        
+        function invertGreys() {
+            canvasHistory.saveState(matrixData)
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLS; col++) {
+                    switch (matrixData[row][col]) {
+                        case lightGrey:
+                            matrixData[row][col] = darkGrey;
+                            break;
+                        case darkGrey:
+                            matrixData[row][col] = lightGrey;
+                            break;
+                    };
+                };
+            };
+            drawMatrix();
+        };
 
         function mirrorHorizontal() {
+            canvasHistory.saveState(matrixData)
             for (let row = 0; row < ROWS; row++) {
                 for (let col = 0; col < COLS / 2; col++) {
                     matrixData[row][COLS - col - 1] = matrixData[row][col];
-                }
-            }
+                };
+            };
             drawMatrix();
-        }
+        };
 
         function mirrorVertical() {
+            canvasHistory.saveState(matrixData);
             for (let row = 0; row < ROWS / 2; row++) {
                 for (let col = 0; col < COLS; col++) {
                     matrixData[ROWS - row - 1][col] = matrixData[row][col];
-                }
-            }
+                };
+            };
             drawMatrix();
-        }
+        };
+
+        function flip(direction = 'horizontal') {
+            canvasHistory.saveState(matrixData);
+            if (direction === 'horizontal') {
+                console.log("flip horizontal");
+                matrixData = matrixData.map(row => row.slice().reverse());
+            } else if (direction === 'vertical') {
+                console.log("flip vertical");
+                matrixData = matrixData.slice().reverse();
+            };
+            drawMatrix();
+        };
 
         function copyToClipboard(text) {
             console.log(text);
@@ -1245,7 +1451,7 @@
             $('body').append($temp);
             $temp.val(text).select();
             document.execCommand('copy');
-            $temp.remove();
+            $temp.remove()
 
             swalBS.fire({
                 position: "top-end",
@@ -1255,48 +1461,64 @@
                 showConfirmButton: false,
                 timer: 1500
             });
-        }
+        };
+
+        function copyWrappedToMatrix() {
+            for (let row = 0; row < ROWS; row++) {
+                for (let col = 0; col < COLS; col++) {
+                    matrixData[row][col] = wrappedMatrix[row][col];
+                };
+            };
+        };
 
         function moveUp() {
+            canvasHistory.saveState(matrixData);
             for (let row = 0; row < ROWS - 1; row++) {
                 for (let col = 0; col < COLS; col++) {
-                    matrixData[row][col] = matrixData[row + 1][col];
-                    matrixData[row + 1][col] = '#000000';
-                }
-            }
+                    const srcRow = (row + 1) % ROWS;
+                    wrappedMatrix[row][col] = matrixData[srcRow][col];
+                };
+            };
+            copyWrappedToMatrix();
             drawMatrix();
             nudgeY();
-        }
+        };
 
         function moveDown() {
+            canvasHistory.saveState(matrixData);
             for (let row = ROWS - 1; row > 0; row--) {
                 for (let col = 0; col < COLS; col++) {
-                    matrixData[row][col] = matrixData[row - 1][col];
-                    matrixData[row - 1][col] = '#000000';
-                }
-            }
+                    const srcRow = (row - 1 + ROWS) % ROWS;
+                    wrappedMatrix[row][col] = matrixData[srcRow][col];
+                };
+            };
+            copyWrappedToMatrix();
             drawMatrix();
             nudgeY();
-        }
+        };
 
         function moveLeft() {
+            canvasHistory.saveState(matrixData);
             for (let row = 0; row < ROWS; row++) {
                 for (let col = 0; col < COLS - 1; col++) {
-                    matrixData[row][col] = matrixData[row][col + 1];
-                    matrixData[row][col + 1] = '#000000';
-                }
-            }
+                    const srcCol = (col + 1) % COLS;
+                    wrappedMatrix[row][col] = matrixData[row][srcCol];
+                };
+            };
+            copyWrappedToMatrix();
             drawMatrix();
             nudgeX();
         }
 
         function moveRight() {
+            canvasHistory.saveState(matrixData)
             for (let row = 0; row < ROWS; row++) {
                 for (let col = COLS - 1; col > 0; col--) {
-                    matrixData[row][col] = matrixData[row][col - 1];
-                    matrixData[row][col - 1] = '#000000';
+                    const srcCol = (col - 1 + COLS) % COLS;
+                    wrappedMatrix[row][col] = matrixData[row][srcCol];
                 }
             }
+            copyWrappedToMatrix();
             drawMatrix();
             nudgeX();
         }
@@ -1305,21 +1527,21 @@
             $('#canvas-container').addClass('nudgeX');
 
             setTimeout(() => {
-                $('#canvas-container').removeClass('nudgeX');
+                $('#canvas-container').removeClass('nudgeX')
             }, 700);
-        }
+        };
 
         function nudgeY() {
             $('#canvas-container').addClass('nudgeY');
 
             setTimeout(() => {
-                $('#canvas-container').removeClass('nudgeY');
+                $('#canvas-container').removeClass('nudgeY')
             }, 700);
-        }
+        };
 
         // Export matrix data as JSON
         function exportData() {
-            const dataStr = JSON.stringify(matrixData).replaceAll('"#ffffff"', '1').replaceAll('"#000000"', '0').replaceAll('"#505050"', '0.5');
+            const dataStr = JSON.stringify(matrixData).replaceAll(white, whiteValue).replaceAll(black, blackValue).replaceAll(darkGrey, darkGreyValue).replaceAll(lightGrey, lightGreyValue);
 
             swalBS.fire({
                 title: getCorrectTranslation('copycode'),
@@ -1334,76 +1556,68 @@
                 cancelButtonText: 'Cancel',
                 cancelButtonAriaLabel: "Thumbs down"
             });
-        }
-        
-        function showHelp() {
-            swalBS.fire({
-                title: "<h1>How to use this tool</h1>",
-                icon: "question",
-                theme: "dark",
-                html: `
-                <div class="left_align"><h2>Drawing Tools</strong></h2>
-                <b>Draw:</b> Paint on the canvas.</br>
-                <b>Fill:</b> Fill contiguous pixels</br>
-                <b>Clear All:</b> Clear the canvas.</br></br>
-                <h2>Colors</h2>
-                Selects color to use with the drawing tool.</br>
-                <b>White:</b> 100% opacity pixel.</br>
-                <b>Grey:</b> 50% opacity pixel.</br>
-                <b>Black:</b> Turns off the pixel.</br></br>
-                <h2>Canvas Manipulation</h2>
-                <b>Invert:</b> Inverts black and white colors.</i></br>
-                <b>Mirror Horizontal:</b> Mirrors left side of the canvas to the right.</br>
-                <b>Mirror Vertical:</b> Mirrors top side of the canvas down.</br>
-                <b>Keyboard arrows:</b> Nudge the whole drawing Up, Down, Left, or Right.</br>
-                </br></div>
-                `,
-                customClass: {
-                    popup: 'swal2-custom-align'
-                },
-                showCloseButton: true,
-                focusConfirm: false,
-                confirmButtonText: `<i class="fa fa-thumbs-up"></i> Close`
-            });
-        }
+        };
 
         // Event listeners
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('draw-white').value = whiteValue;
+            document.getElementById('draw-lightGrey').value = lightGreyValue;
+            document.getElementById('draw-darkGrey').value = darkGreyValue;
+            document.getElementById('draw-black').value = blackValue;
+        });
+        
+        //Lazy loading of community items
+        const communityDiv = document.querySelector('#community .offcanvas-body');
+        const loadMoreBtn = document.getElementById('community-load-more-btn');
+       
+        communityDiv.addEventListener('scroll', () => {
+            const isAtBottom = communityDiv.scrollTop + communityDiv.clientHeight >= communityDiv.scrollHeight;
+            if (isAtBottom) {
+                loadMoreBtn.click();
+            };
+        });
+        
         canvas.addEventListener('mousedown', (e) => {
             isDrawing = true;
+
             const coords = getMatrixCoords(e);
             if (coords) {
                 switch (currentMode) {
                     case 'draw':
                         switch (currentColor) {
                             case 1:
-                                updateCell(coords.row, coords.col, '#ffffff');
+                                updateCell(coords.row, coords.col, white);
                                 break;
                             case 0.5:
-                                updateCell(coords.row, coords.col, '#505050');
+                                updateCell(coords.row, coords.col, darkGrey);
+                                break;
+                            case 0.7:
+                                updateCell(coords.row, coords.col, lightGrey);
                                 break;
                             case 0:
-                                updateCell(coords.row, coords.col, '#000000');
+                                updateCell(coords.row, coords.col, black);
                                 break;
-                        }
+                        };
                         break;
                     case 'fill':
                         switch (currentColor) {
                             case 1:
-                                fillAll(coords.row, coords.col, '#ffffff');
+                                fillAll(coords.row, coords.col, white);
                                 break;
                             case 0.5:
-                                fillAll(coords.row, coords.col, '#505050');
+                                fillAll(coords.row, coords.col, darkGrey);
+                                break;
+                            case 0.7:
+                                fillAll(coords.row, coords.col, lightGrey);
                                 break;
                             case 0:
-                                fillAll(coords.row, coords.col, '#000000');
+                                fillAll(coords.row, coords.col, black);
                                 break;
-                        }
+                        };
                         break;
-                    case 'clear':
-                        updateCell(coords.row, coords.col, '#000000');
-                        break;
-                }
-            }
+                };
+            };
         });
 
         canvas.addEventListener('mousemove', (e) => {
@@ -1417,24 +1631,24 @@
                         case 'draw':
                             switch (currentColor) {
                                 case 1:
-                                    updateCell(coords.row, coords.col, '#ffffff');
+                                    updateCell(coords.row, coords.col, white);
                                     break;
                                 case 0.5:
-                                    updateCell(coords.row, coords.col, '#505050');
+                                    updateCell(coords.row, coords.col, darkGrey);
+                                    break;
+                                case 0.7:
+                                    updateCell(coords.row, coords.col, lightGrey);
                                     break;
                                 case 0:
-                                    updateCell(coords.row, coords.col, '#000000');
+                                    updateCell(coords.row, coords.col, black);
                                     break;
-                            }
+                            };
                             break;
-                        case 'clear':
-                            updateCell(coords.row, coords.col, '#000000');
-                            break;
-                    }
-                }
+                    };
+                };
             } else {
                 mousePosDisplay.textContent = getCorrectTranslation('position1');
-            }
+            };
         });
 
         canvas.addEventListener('mouseout', () => {
@@ -1443,6 +1657,7 @@
 
         window.addEventListener('mouseup', () => {
             isDrawing = false;
+            canvasHistory.saveState(matrixData);
         });
 
         window.addEventListener('resize', resizeCanvas);
@@ -1465,11 +1680,259 @@
                     moveDown();
                     break;
                 default: return; // exit this handler for other keys
-            }
+            };
 
             e.preventDefault(); // prevent the default action (scroll / move caret)
         });
     </script>
-</body>
 
+    <!-- User functions -->
+    <script>
+        function loginUser(id, username) {
+            sessionStorage.setItem('id', id);
+            sessionStorage.setItem('username', username);
+
+            $('#ddLogin, #btnSignup').css('display', 'none');
+            $('#member, #btnShare').css('display', 'block');
+            $('#member button.dropdown-toggle').text(username);
+        };
+
+        $('#btnLoginConfirm').click(function (evt) {
+            if (!$('#txtLoginUsername').val()) {
+                $('#txtLoginUsername').addClass('is-invalid');
+                $('#txtLoginUsername').focus();
+            } else if (!$('#txtLoginPassword').val()) {
+                $('#txtLoginPassword').addClass('is-invalid');
+                $('#txtLoginPassword').focus();
+            } else {
+                $.ajax({
+                    url: `${api}loginuser/${$('#txtLoginUsername').val()}/${$('#txtLoginPassword').val()}`,
+                    type: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success === true) {
+                            swalBS.fire({
+                                position: "top-end",
+                                icon: "success",
+                                theme: "dark",
+                                title: getCorrectTranslation('welcomeUser').replace('{user}', response.data.data.username),
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+
+                            loginUser(response.data.data.id, $('#txtLoginUsername').val());
+
+                            if ($('#chkLoginRemember').is(':checked')) {
+                                localStorage.setItem('username', $('#txtLoginUsername').val());
+                                localStorage.setItem('password', $('#txtLoginPassword').val());
+                                localStorage.setItem('remember', true);
+                            };
+
+                            $('#txtLoginUsername, #txtLoginPassword').val('');
+                            if ($('#txtLoginUsername').hasClass('is-invalid')) $('#txtLoginUsername').removeClass('is-invalid');
+                            if ($('#txtLoginPassword').hasClass('is-invalid')) $('#txtLoginPassword').removeClass('is-invalid');
+
+                            //if ($('#frmLogin').hasClass('show')) $('#frmLogin').removeClass('show')
+                            $('#frmLogin').dropdown('hide');
+                        } else {
+                            swalBS.fire({
+                                icon: "error",
+                                title: getCorrectTranslation('oops'),
+                                theme: "dark",
+                                text: getCorrectTranslation(response.data.code),
+                            });
+                        };
+                    },
+                    error: function (err) {
+                        swalBS.fire({
+                            icon: "error",
+                            title: getCorrectTranslation('oops'),
+                            theme: "dark",
+                            text: err.statusText,
+                        });
+                    }
+                });
+            };
+        });
+
+        $('#btnSignupConfirm').click(function (evt) {
+            if (!$('#txtSignupEmail').val()) {
+                $('#txtSignupEmail').addClass('is-invalid');
+                $('#txtSignupEmail').focus();
+            } else if (!$('#txtSignupUsername').val()) {
+                $('#txtSignupUsername').addClass('is-invalid');
+                $('#txtSignupUsername').focus();
+            } else if (naughtyWords.includes($('#txtSignupUsername').val())) {
+                $('#txtSignupUsername').addClass('is-invalid');
+                $('#txtSignupUsername').focus();
+                swalBS.fire({
+                    icon: "error",
+                    title: getCorrectTranslation('oops'),
+                    theme: "dark",
+                    text: getCorrectTranslation('inappropriateTextWarning'),
+                });
+            } else if (!$('#txtSignupPassword').val()) {
+                $('#txtSignupPassword').addClass('is-invalid');
+                $('#txtSignupPassword').focus();
+            } else if (!$('#txtSignupConfirmPassword').val()) {
+                $('#txtSignupConfirmPassword').addClass('is-invalid');
+                $('#txtSignupConfirmPassword').focus();
+            } else if ($('#txtSignupPassword').val() != $('#txtSignupConfirmPassword').val()) {
+                $('#txtSignupPassword').addClass('is-invalid');
+                $('#txtSignupConfirmPassword').addClass('is-invalid');
+                $('#txtSignupPassword').focus();
+                swalBS.fire({
+                    icon: "error",
+                    title: getCorrectTranslation('oops'),
+                    theme: "dark",
+                    text: getCorrectTranslation('passwordNotMatch'),
+                });
+            } else {
+                var json = {
+                    username: $('#txtSignupUsername').val(),
+                    email: $('#txtSignupEmail').val(),
+                    password: $('#txtSignupConfirmPassword').val()
+                };
+                var jsonData = JSON.stringify(json);
+
+                $.ajax({
+                    url: `${api}users`,
+                    type: 'POST',
+                    data: jsonData,
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success === true) {
+                            swalBS.fire({
+                                position: "top-end",
+                                icon: "success",
+                                theme: "dark",
+                                title: getCorrectTranslation('signedUp'),
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+
+                            loginUser(response.id, $('#txtSignupUsername').val())
+
+                            $('#txtSignupEmail, #txtSignupUsername, #txtSignupConfirmPassword, #txtSignupPassword').val('');
+                            if ($('#txtSignupEmail').hasClass('is-invalid')) $('#txtSignupEmail').removeClass('is-invalid');
+                            if ($('#txtSignupUsername').hasClass('is-invalid')) $('#txtSignupUsername').removeClass('is-invalid');
+                            if ($('#txtSignupConfirmPassword').hasClass('is-invalid')) $('#txtSignupConfirmPassword').removeClass('is-invalid');
+                            if ($('#txtSignupPassword').hasClass('is-invalid')) $('#txtSignupPassword').removeClass('is-invalid');
+
+                            $('#modal-signup').modal('hide');
+                        } else {
+                            swalBS.fire({
+                                icon: "error",
+                                title: getCorrectTranslation('oops'),
+                                theme: "dark",
+                                text: getCorrectTranslation(response.data.code),
+                            });
+                        };
+                    },
+                    error: function (err) {
+                        swalBS.fire({
+                            icon: "error",
+                            title: getCorrectTranslation('oops'),
+                            theme: "dark",
+                            text: err.statusText,
+                        });
+                    }
+                });
+            };
+        });
+
+        $('#btnChangePasswordConfirm').click(function (evt) {
+            if (!$('#txtCurrentPassword').val()) {
+                $('#txtCurrentPassword').addClass('is-invalid');
+                $('#txtCurrentPassword').focus();
+            } else if (!$('#txtNewPassword').val()) {
+                $('#txtNewPassword').addClass('is-invalid');
+                $('#txtNewPassword').focus();
+            } else if (!$('#txtConfirmNewPassword').val()) {
+                $('#txtConfirmNewPassword').addClass('is-invalid');
+                $('#txtConfirmNewPassword').focus();
+            } else if ($('#txtNewPassword').val() != $('#txtConfirmNewPassword').val()) {
+                $('#txtSignupPassword').addClass('is-invalid');
+                $('#txtConfirmNewPassword').addClass('is-invalid');
+                $('#txtNewPassword').focus();
+                swalBS.fire({
+                    icon: "error",
+                    title: getCorrectTranslation('oops'),
+                    theme: "dark",
+                    text: getCorrectTranslation('passwordNotMatch'),
+                });
+            } else {
+                var json = { currentPassword: $('#txtCurrentPassword').val(), newPassword: $('#txtConfirmNewPassword').val() };
+                var jsonData = JSON.stringify(json);
+
+                $.ajax({
+                    url: `${api}updateuser/${parseInt(sessionStorage.getItem('id') || -1)}`,
+                    type: 'POST',
+                    data: jsonData,
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success === true) {
+                            swalBS.fire({
+                                position: "top-end",
+                                icon: "success",
+                                theme: "dark",
+                                title: getCorrectTranslation('passwordChanged'),
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+
+                            sessionStorage.clear();
+
+                            $('#ddLogin, #btnSignup').css('display', 'block');
+                            $('#member, #btnShare').css('display', 'none');
+                            $('#member button.dropdown-toggle').text('Guest');
+
+                            $('#txtCurrentPassword, #txtNewPassword, #txtConfirmNewPassword').val('');
+                            if ($('#txtCurrentPassword').hasClass('is-invalid')) $('#txtCurrentPassword').removeClass('is-invalid');
+                            if ($('#txtNewPassword').hasClass('is-invalid')) $('#txtNewPassword').removeClass('is-invalid');
+                            if ($('#txtConfirmNewPassword').hasClass('is-invalid')) $('#txtConfirmNewPassword').removeClass('is-invalid');
+
+                            $('#modal-change-password').modal('hide');
+                        } else {
+                            swalBS.fire({
+                                icon: "error",
+                                title: getCorrectTranslation('oops'),
+                                theme: "dark",
+                                text: getCorrectTranslation(response.data.code),
+                            });
+                        };
+                    },
+                    error: function (err) {
+                        swalBS.fire({
+                            icon: "error",
+                            title: getCorrectTranslation('oops'),
+                            theme: "dark",
+                            text: err.statusText,
+                        });
+                    }
+                });
+            };
+        });
+
+        $('#aLogout').click(function (evt) {
+            sessionStorage.clear();
+
+            $('#ddLogin, #btnSignup').css('display', 'block');
+            $('#member, #btnShare').css('display', 'none');
+            $('#member button.dropdown-toggle').text('Guest');
+        });
+
+        $('#btnShare').click(function (evt) {
+            let loggedIn = { username: sessionStorage.getItem('username') || null, userid: sessionStorage.getItem('id') || null };
+            if (loggedIn.userid != null && loggedIn.username != null) {
+                $('#modal-share').modal('show');
+            } else {
+                $('#frmLogin').dropdown('show');
+            };
+        });
+    </script>
+</body>
 </html>

@@ -17,15 +17,16 @@ forcedColor:readonly
 */
 export function ControllableParameters() {
 	return [
-		{"property":"LightingMode", "group":"settings", "label":"Lighting Mode", "type":"combobox", "values":["Canvas", "Forced"], "default":"Canvas"},
+		{"property":"LightingMode", "group":"settings", "label":"Lighting Mode", "type":"combobox", "values":["Canvas", "Forced", "Hybrid", "Inverted Hybrid"], "default":"Canvas"},
 		{"property":"forcedColor", "group":"settings", "label":"Forced Color", "min":"0", "max":"360", "type":"color", "default":"#009bde"},
 		{"property":"turnOffOnShutdown", "group":"settings", "label":"Turn WLED device OFF on Shutdown", "type":"boolean", "default":"false"},
 		{"property":"display_mode","label":"Display Mode", "type":"combobox", "values":["Components", "Time", "Custom Text", "Pixel Art"], "default":"Components"},
 		{"property":"fontSize","label":"Font Size", "type":"combobox", "values":["Small", "Medium"], "default":"Medium"},
-        {"property":"darkGrey","label":"Gray", "step":"5", "type":"number", "min":"5", "max":"100", "default":"50"},
+        {"property":"lightGrey","label":"Light Gray", "step":"1", "type":"number", "min":"5", "max":"99", "default":"50"},
+        {"property":"darkGrey","label":"Dark Gray", "step":"1", "type":"number", "min":"5", "max":"99", "default":"50"},
 		{"property":"custom_text", "label":"Display Mode: Custom Text", "type":"textfield", "default":"WLED"},
 		{"property":"time_format", "label":"Display Mode: Time", "type":"textfield", "default":"hh:mm tt"},
-		{"property":"pixel_art", "label":"Display Mode: Pixel Art", "type":"textfield", "default":"[ [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0], [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0], [0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] ]"},
+		{"property":"pixel_art", "label":"Display Mode: Pixel Art (make your own at pixelart.nolliergb.com", "type":"textfield", "default":"[ [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0], [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0], [0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] ]"},
 		{"property":"paddingX", "label":"Padding X", "type":"textfield", "default":0, "filter":/^\d+$/},
 		{"property":"paddingY", "label":"Padding Y", "type":"textfield", "default":1, "filter":/^\d+$/},
 	];
@@ -2039,7 +2040,7 @@ export function onpixel_artChanged()
 	{
 		try
 		{			
-			PIXELART = JSON.parse(pixel_art)
+			PIXELART = JSON.parse(pixel_art) 
 			device.log('Pixel Art Updated!');
 		}
 		catch(ex)
@@ -2429,11 +2430,15 @@ class WLEDDevice {
 		let ChannelLedCount = componentChannel.ledCount > this.deviceledcount ? this.deviceledcount : componentChannel.ledCount;
 
 		let RGBData = [];
+        let RGBData2 = [];
 
 		if(shutdown) {
 			RGBData = device.createColorArray(colorBlack, ChannelLedCount, "Inline");
 		} else if(LightingMode === "Forced") {
 			RGBData = device.createColorArray(forcedColor, ChannelLedCount, "Inline");
+        } else if(LightingMode === "Hybrid" || LightingMode === "Inverted Hybrid") {
+			RGBData = device.createColorArray(forcedColor, ChannelLedCount, "Inline");
+            RGBData2 = componentChannel.getColors("Inline");
 		} else if(componentChannel.shouldPulseColors()) {
 			ChannelLedCount = this.deviceledcount;
 			const pulseColor = device.getChannelPulseColor(this.name);
@@ -2464,19 +2469,44 @@ class WLEDDevice {
                         scaleFactor=1
                         if(Snake_display[led_index] == 0.5){
                             scaleFactor=darkGrey/100
+                        } else if(Snake_display[led_index] == 0.7){
+                            scaleFactor=lightGrey/100
                         }
-                        RGBData[led_index * 3] = Math.floor(RGBData[led_index * 3] * scaleFactor);
-						RGBData[led_index * 3 + 1] = Math.floor(RGBData[led_index * 3 + 1] * scaleFactor);
-						RGBData[led_index * 3 + 2] = Math.floor(RGBData[led_index * 3 + 2] * scaleFactor);
-                        //if(Snake_display[led_index] == 0.5){
-                        //    device.log([RGBData[led_index * 3], RGBData[led_index * 3 + 1], RGBData[led_index * 3 + 2]])
-                        //}
-                        
+                        if (LightingMode === "Forced") {
+                            RGBData[led_index * 3] = Math.floor(RGBData[led_index * 3] * scaleFactor)
+                            RGBData[led_index * 3 + 1] = Math.floor(RGBData[led_index * 3 + 1] * scaleFactor)
+                            RGBData[led_index * 3 + 2] = Math.floor(RGBData[led_index * 3 + 2] * scaleFactor)
+                        }
+                        if (LightingMode === "Canvas") {
+                            RGBData[led_index * 3] = Math.floor(RGBData[led_index * 3] * scaleFactor)
+                            RGBData[led_index * 3 + 1] = Math.floor(RGBData[led_index * 3 + 1] * scaleFactor)
+                            RGBData[led_index * 3 + 2] = Math.floor(RGBData[led_index * 3 + 2] * scaleFactor)
+                        } else if (LightingMode === "Hybrid") {
+                            if (scaleFactor == 1) {
+                                RGBData[led_index * 3] = Math.floor(RGBData[led_index * 3] * scaleFactor)
+                                RGBData[led_index * 3 + 1] = Math.floor(RGBData[led_index * 3 + 1] * scaleFactor)
+                                RGBData[led_index * 3 + 2] = Math.floor(RGBData[led_index * 3 + 2] * scaleFactor)
+                            } else {
+                                RGBData[led_index * 3] = Math.floor(RGBData2[led_index * 3] * scaleFactor)
+                                RGBData[led_index * 3 + 1] = Math.floor(RGBData2[led_index * 3 + 1] * scaleFactor)
+                                RGBData[led_index * 3 + 2] = Math.floor(RGBData2[led_index * 3 + 2] * scaleFactor)
+                            }
+                        } else if (LightingMode === "Inverted Hybrid") {
+                            if (scaleFactor == 1) {
+                                RGBData[led_index * 3] = Math.floor(RGBData2[led_index * 3] * scaleFactor)
+                                RGBData[led_index * 3 + 1] = Math.floor(RGBData2[led_index * 3 + 1] * scaleFactor)
+                                RGBData[led_index * 3 + 2] = Math.floor(RGBData2[led_index * 3 + 2] * scaleFactor)
+                            } else {
+                                RGBData[led_index * 3] = Math.floor(RGBData[led_index * 3] * scaleFactor)
+                                RGBData[led_index * 3 + 1] = Math.floor(RGBData[led_index * 3 + 1] * scaleFactor)
+                                RGBData[led_index * 3 + 2] = Math.floor(RGBData[led_index * 3 + 2] * scaleFactor)
+                            }
+                        }
                     }
 				}	
 			}
-		}
-
+        }
+		
 		for(let CurrPacket = 0; CurrPacket < NumPackets; CurrPacket++) {
 			const startIdx = CurrPacket * MaxLedsInPacket;
 			const highByte = ((startIdx >> 8) & 0xFF);
