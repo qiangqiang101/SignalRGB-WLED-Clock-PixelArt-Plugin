@@ -25,6 +25,8 @@ export function ControllableParameters() {
 		{ "property": "custom_text", "label": "Display Mode: Custom Text", "type": "textfield", description: "This used when 'Display Mode' is set to 'Custom Text'", "default": "WLED" },
 		{ "property": "time_format", "label": "Display Mode: Time", "type": "textfield", description: "This used when 'Display Mode' is set to 'Time'", "default": "hh:mm tt" },
 		{ "property": "pixel_art", "label": "Display Mode: Pixel Art", "type": "textfield", description: "This used when 'Display Mode' is set to 'Pixel Art'", "default": "[ [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0], [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0], [0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] ]" },
+		{ "property": "translucent1", "label": "Translucent 1 Level", description: "This used when 'Display Mode' is set to 'Pixe Art'", "step": "1", "type": "number", "min": "1", "max": "100", "default": "30" },
+		{ "property": "translucent2", "label": "Translucent 2 Level", description: "This used when 'Display Mode' is set to 'Pixel Art'", "step": "1", "type": "number", "min": "1", "max": "100", "default": "80" },
 		{ "property": "paddingX", "label": "Padding X", "type": "textfield", "default": 0, "filter": /^\d+$/ },
 		{ "property": "paddingY", "label": "Padding Y", "type": "textfield", "default": 1, "filter": /^\d+$/ },
 	];
@@ -2100,6 +2102,15 @@ function rearrangeDisplayForSnakeLayout(display) {
 	return snakeDisplay;
 }
 
+function hexToRgb(hex) {
+	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+	return result ? {
+		r: parseInt(result[1], 16),
+		g: parseInt(result[2], 16),
+		b: parseInt(result[3], 16)
+	} : null;
+}
+
 function detect2DMapping() {
 	let instance = WLED;
 	jobRunning = true;
@@ -2170,11 +2181,11 @@ function formatDateTime(format) {
 }
 
 function lowerBrightnessRGB(R, G, B, factor) {
-  const newR = Math.max(0, Math.floor(R * factor));
-  const newG = Math.max(0, Math.floor(G * factor));
-  const newB = Math.max(0, Math.floor(B * factor));
+	const newR = Math.max(0, Math.floor(R * factor));
+	const newG = Math.max(0, Math.floor(G * factor));
+	const newB = Math.max(0, Math.floor(B * factor));
 
-  return [newR, newG, newB];
+	return [newR, newG, newB];
 }
 
 function displayClock() {
@@ -2384,11 +2395,25 @@ class WLEDDevice {
 							RGBData[led_index * 3 + 1] = 0;
 							RGBData[led_index * 3 + 2] = 0;
 							break;
+						case 0.3:
+							let fcRGB = hexToRgb(forcedColor);
+							RGBData[led_index * 3] = fcRGB.r;
+							RGBData[led_index * 3 + 1] = fcRGB.g;
+							RGBData[led_index * 3 + 2] = fcRGB.b;
+							break;
 						case 0.5:
-							let darken = lowerBrightnessRGB(RGBData[led_index * 3], RGBData[led_index * 3 + 1], RGBData[led_index * 3 + 2], 0.1);
+							let scaleFactor = translucent1 / 100;
+							let darken = lowerBrightnessRGB(RGBData[led_index * 3], RGBData[led_index * 3 + 1], RGBData[led_index * 3 + 2], scaleFactor);
 							RGBData[led_index * 3] = darken[0];
 							RGBData[led_index * 3 + 1] = darken[1];
 							RGBData[led_index * 3 + 2] = darken[2];
+							break;
+						case 0.7:
+							let scaleFactor2 = translucent2 / 100;
+							let darken2 = lowerBrightnessRGB(RGBData[led_index * 3], RGBData[led_index * 3 + 1], RGBData[led_index * 3 + 2], scaleFactor2);
+							RGBData[led_index * 3] = darken2[0];
+							RGBData[led_index * 3 + 1] = darken2[1];
+							RGBData[led_index * 3 + 2] = darken2[2];
 							break;
 					}
 				}
