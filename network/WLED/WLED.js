@@ -22,8 +22,8 @@ export function ControllableParameters() {
 		{"property":"turnOffOnShutdown", "group":"settings", "label":"Turn WLED device OFF on Shutdown", "type":"boolean", "default":"false"},
 		{"property":"display_mode","label":"Display Mode", "type":"combobox", "values":["Components", "Time", "Custom Text", "Pixel Art"], "default":"Components"},
 		{"property":"fontSize","label":"Font Size", "type":"combobox", "values":["Small", "Medium"], "default":"Medium"},
-        {"property":"lightGrey","label":"Light Gray", "step":"1", "type":"number", "min":"5", "max":"99", "default":"50"},
-        {"property":"darkGrey","label":"Dark Gray", "step":"1", "type":"number", "min":"5", "max":"99", "default":"50"},
+		{"property":"lightGrey","label":"Light Gray", "step":"1", "type":"number", "min":"5", "max":"99", "default":"50"},
+		{"property":"darkGrey","label":"Dark Gray", "step":"1", "type":"number", "min":"5", "max":"99", "default":"50"},
 		{"property":"custom_text", "label":"Display Mode: Custom Text", "type":"textfield", "default":"WLED"},
 		{"property":"time_format", "label":"Display Mode: Time", "type":"textfield", "default":"hh:mm tt"},
 		{"property":"pixel_art", "label":"Display Mode: Pixel Art (make your own at pixelart.nolliergb.com", "type":"textfield", "default":"[ [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0], [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0], [0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] ]"},
@@ -2072,35 +2072,35 @@ export function ondisplay_modeChanged()
 
 function insertDigitIntoDisplay(display, digit, startCol) 
 {
-    let newLineCh = digit.length
-    let digitWidth = digit[0].length
-    let nLine = Math.floor((startCol + digitWidth) / displaySize.width)
-    
-    rowOffset = nLine * newLineCh
-    if (startCol + digitWidth + 1 >= nextMultiple(startCol, displaySize.width)) {
-        startCol = nextMultiple(startCol, displaySize.width) * nLine
-        //device.log(startCol)
-    }
-    
-    for (let row = 0; row < digit.length; row++) 
-    {
-        for (let col = 0; col < digit[row].length; col++) 
-        {
+	let newLineCh = digit.length
+	let digitWidth = digit[0].length
+	let nLine = Math.floor((startCol + digitWidth) / displaySize.width)
+	
+	rowOffset = nLine * newLineCh
+	if (startCol + digitWidth + 1 >= nextMultiple(startCol, displaySize.width)) {
+		startCol = nextMultiple(startCol, displaySize.width) * nLine
+		//device.log(startCol)
+	}
+	
+	for (let row = 0; row < digit.length; row++) 
+	{
+		for (let col = 0; col < digit[row].length; col++) 
+		{
 			let index = (rowOffset * displaySize.width + row * displaySize.width + (displaySize.width * paddingY)) + startCol + col + parseInt(paddingX);
 
 			if (index < displaySize.height * displaySize.width) 
 			{  
 				display[index] = digit[row][col];
 			}
-        }
-    }
-    //rowOffset = 0
+		}
+	}
+	//rowOffset = 0
 }
 
 function nextMultiple(value, multiple) {
-    if (multiple === 0) return value; // Avoid division by zero
-    //device.log(Math.ceil(value / multiple) * multiple)
-    return Math.ceil(value / multiple) * multiple;
+	if (multiple === 0) return value; // Avoid division by zero
+	//device.log(Math.ceil(value / multiple) * multiple)
+	return Math.ceil(value / multiple) * multiple;
 }
 
 
@@ -2133,8 +2133,8 @@ function adjustBrightness(hex, factor) {
   const newB = Math.min(255, Math.max(0, Math.round(b * factor)));
 
   const toHex = (c) => {
-    const hexValue = c.toString(16);
-    return hexValue.length === 1 ? "0" + hexValue : hexValue;
+	const hexValue = c.toString(16);
+	return hexValue.length === 1 ? "0" + hexValue : hexValue;
   };
 
   const newHex = `#${toHex(newR)}${toHex(newG)}${toHex(newB)}`;
@@ -2144,14 +2144,14 @@ function adjustBrightness(hex, factor) {
 
 function rearrangeDisplayForSnakeLayout(display) 
 {
-    const snakeDisplay = new Array(display.length);
-    
-    for (let i = 0; i < display.length; i++) 
-    {
+	const snakeDisplay = new Array(display.length);
+	
+	for (let i = 0; i < display.length; i++) 
+	{
 		if (COMPONENT_MAPPING.length == 0) { if (!jobRunning) { detect2DMapping(); } } else { snakeDisplay[COMPONENT_MAPPING[i]] = display[i]; }
-    }
+	}
 
-    return snakeDisplay;
+	return snakeDisplay;
 }
 
 function detect2DMapping()
@@ -2422,23 +2422,23 @@ class WLEDDevice {
 		device.SetLedLimit(this.deviceledcount);
 		device.addChannel(this.name, this.deviceledcount);
 	}
-    
-    
+	
+	
 
 	SendColorPackets(shutdown = false) {
 		const componentChannel = device.channel(this.name);
 		let ChannelLedCount = componentChannel.ledCount > this.deviceledcount ? this.deviceledcount : componentChannel.ledCount;
 
 		let RGBData = [];
-        let RGBData2 = [];
+		let RGBData2 = [];
 
 		if(shutdown) {
 			RGBData = device.createColorArray(colorBlack, ChannelLedCount, "Inline");
 		} else if(LightingMode === "Forced") {
 			RGBData = device.createColorArray(forcedColor, ChannelLedCount, "Inline");
-        } else if(LightingMode === "Hybrid" || LightingMode === "Inverted Hybrid") {
+		} else if(LightingMode === "Hybrid" || LightingMode === "Inverted Hybrid") {
 			RGBData = device.createColorArray(forcedColor, ChannelLedCount, "Inline");
-            RGBData2 = componentChannel.getColors("Inline");
+			RGBData2 = componentChannel.getColors("Inline");
 		} else if(componentChannel.shouldPulseColors()) {
 			ChannelLedCount = this.deviceledcount;
 			const pulseColor = device.getChannelPulseColor(this.name);
@@ -2448,7 +2448,7 @@ class WLEDDevice {
 		}
 
 		const NumPackets = Math.ceil(ChannelLedCount / MaxLedsInPacket);
-        //const NumPackets = ChannelLedCount / MaxLedsInPacket;
+		//const NumPackets = ChannelLedCount / MaxLedsInPacket;
 
 		if (display_mode != 'Components') 
 		{
@@ -2456,7 +2456,7 @@ class WLEDDevice {
 			{
 				displayClock();	
 				let Snake_display = rearrangeDisplayForSnakeLayout(display);
-                let scaleFactor = 1.0
+				let scaleFactor = 1.0
 				for(let led_index = 0; led_index < Snake_display.length;led_index++)
 				{
 					if(Snake_display[led_index] == 0)
@@ -2464,48 +2464,48 @@ class WLEDDevice {
 						RGBData[led_index * 3] = 0;
 						RGBData[led_index * 3 + 1] = 0;
 						RGBData[led_index * 3 + 2] = 0;
-                        
-                    } else {
-                        scaleFactor=1
-                        if(Snake_display[led_index] == 0.5){
-                            scaleFactor=darkGrey/100
-                        } else if(Snake_display[led_index] == 0.7){
-                            scaleFactor=lightGrey/100
-                        }
-                        if (LightingMode === "Forced") {
-                            RGBData[led_index * 3] = Math.floor(RGBData[led_index * 3] * scaleFactor)
-                            RGBData[led_index * 3 + 1] = Math.floor(RGBData[led_index * 3 + 1] * scaleFactor)
-                            RGBData[led_index * 3 + 2] = Math.floor(RGBData[led_index * 3 + 2] * scaleFactor)
-                        }
-                        if (LightingMode === "Canvas") {
-                            RGBData[led_index * 3] = Math.floor(RGBData[led_index * 3] * scaleFactor)
-                            RGBData[led_index * 3 + 1] = Math.floor(RGBData[led_index * 3 + 1] * scaleFactor)
-                            RGBData[led_index * 3 + 2] = Math.floor(RGBData[led_index * 3 + 2] * scaleFactor)
-                        } else if (LightingMode === "Hybrid") {
-                            if (scaleFactor == 1) {
-                                RGBData[led_index * 3] = Math.floor(RGBData[led_index * 3] * scaleFactor)
-                                RGBData[led_index * 3 + 1] = Math.floor(RGBData[led_index * 3 + 1] * scaleFactor)
-                                RGBData[led_index * 3 + 2] = Math.floor(RGBData[led_index * 3 + 2] * scaleFactor)
-                            } else {
-                                RGBData[led_index * 3] = Math.floor(RGBData2[led_index * 3] * scaleFactor)
-                                RGBData[led_index * 3 + 1] = Math.floor(RGBData2[led_index * 3 + 1] * scaleFactor)
-                                RGBData[led_index * 3 + 2] = Math.floor(RGBData2[led_index * 3 + 2] * scaleFactor)
-                            }
-                        } else if (LightingMode === "Inverted Hybrid") {
-                            if (scaleFactor == 1) {
-                                RGBData[led_index * 3] = Math.floor(RGBData2[led_index * 3] * scaleFactor)
-                                RGBData[led_index * 3 + 1] = Math.floor(RGBData2[led_index * 3 + 1] * scaleFactor)
-                                RGBData[led_index * 3 + 2] = Math.floor(RGBData2[led_index * 3 + 2] * scaleFactor)
-                            } else {
-                                RGBData[led_index * 3] = Math.floor(RGBData[led_index * 3] * scaleFactor)
-                                RGBData[led_index * 3 + 1] = Math.floor(RGBData[led_index * 3 + 1] * scaleFactor)
-                                RGBData[led_index * 3 + 2] = Math.floor(RGBData[led_index * 3 + 2] * scaleFactor)
-                            }
-                        }
-                    }
+						
+					} else {
+						scaleFactor=1
+						if(Snake_display[led_index] == 0.5){
+							scaleFactor=darkGrey/100
+						} else if(Snake_display[led_index] == 0.7){
+							scaleFactor=lightGrey/100
+						}
+						if (LightingMode === "Forced") {
+							RGBData[led_index * 3] = Math.floor(RGBData[led_index * 3] * scaleFactor)
+							RGBData[led_index * 3 + 1] = Math.floor(RGBData[led_index * 3 + 1] * scaleFactor)
+							RGBData[led_index * 3 + 2] = Math.floor(RGBData[led_index * 3 + 2] * scaleFactor)
+						}
+						if (LightingMode === "Canvas") {
+							RGBData[led_index * 3] = Math.floor(RGBData[led_index * 3] * scaleFactor)
+							RGBData[led_index * 3 + 1] = Math.floor(RGBData[led_index * 3 + 1] * scaleFactor)
+							RGBData[led_index * 3 + 2] = Math.floor(RGBData[led_index * 3 + 2] * scaleFactor)
+						} else if (LightingMode === "Hybrid") {
+							if (scaleFactor == 1) {
+								RGBData[led_index * 3] = Math.floor(RGBData[led_index * 3] * scaleFactor)
+								RGBData[led_index * 3 + 1] = Math.floor(RGBData[led_index * 3 + 1] * scaleFactor)
+								RGBData[led_index * 3 + 2] = Math.floor(RGBData[led_index * 3 + 2] * scaleFactor)
+							} else {
+								RGBData[led_index * 3] = Math.floor(RGBData2[led_index * 3] * scaleFactor)
+								RGBData[led_index * 3 + 1] = Math.floor(RGBData2[led_index * 3 + 1] * scaleFactor)
+								RGBData[led_index * 3 + 2] = Math.floor(RGBData2[led_index * 3 + 2] * scaleFactor)
+							}
+						} else if (LightingMode === "Inverted Hybrid") {
+							if (scaleFactor == 1) {
+								RGBData[led_index * 3] = Math.floor(RGBData2[led_index * 3] * scaleFactor)
+								RGBData[led_index * 3 + 1] = Math.floor(RGBData2[led_index * 3 + 1] * scaleFactor)
+								RGBData[led_index * 3 + 2] = Math.floor(RGBData2[led_index * 3 + 2] * scaleFactor)
+							} else {
+								RGBData[led_index * 3] = Math.floor(RGBData[led_index * 3] * scaleFactor)
+								RGBData[led_index * 3 + 1] = Math.floor(RGBData[led_index * 3 + 1] * scaleFactor)
+								RGBData[led_index * 3 + 2] = Math.floor(RGBData[led_index * 3 + 2] * scaleFactor)
+							}
+						}
+					}
 				}	
 			}
-        }
+		}
 		
 		for(let CurrPacket = 0; CurrPacket < NumPackets; CurrPacket++) {
 			const startIdx = CurrPacket * MaxLedsInPacket;
@@ -2514,7 +2514,7 @@ class WLEDDevice {
 			let packet = [0x04, 0x02, highByte, lowByte];
 			packet = packet.concat(RGBData.splice(0, MaxLedsInPacket*3));
 			udp.send(this.ip, this.streamingPort, packet, BIG_ENDIAN);
-            //device.log(packet)
+			//device.log(packet)
 		}
 	}
 }
