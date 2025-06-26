@@ -137,4 +137,8 @@ Another example: SignalRGB icon on my 16x16 Matrix
 ]
 ```
 
+![QQ_1750906664935](https://github.com/user-attachments/assets/a3984138-a460-42b2-88eb-52d8066fb057)
 I made a simple html page to create pixel art: [https://pixelart.nolliergb.com/](https://pixelart.nolliergb.com/)
+
+# Install
+[![Click here to add this repo to SignalRGB](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/blob/main/addtosrgbgithub.png?raw=true)](https://srgbmods.net/s?p=addon/install?url=https://github.com/qiangqiang101/SignalRGB-WLED-Clock-PixelArt-Plugin)
