@@ -21,12 +21,16 @@ fontSize:readonly
 custom_text:readonly
 time_format:readonly
 pixel_art:readonly
+paddingX:readonly
+paddingY:readonly
+rgbcw_mode:readonly
 */
 export function ControllableParameters() {
 	return [
 		{ "property": "LightingMode", "group": "settings", "label": "Lighting Mode", "type": "combobox", description: "Determines where the device's RGB comes from. Canvas will pull from the active Effect, while Forced will override it to a specific color", "values": ["Canvas", "Forced"], "default": "Canvas" },
 		{ "property": "forcedColor", "group": "settings", "label": "Forced Color", description: "The color used when 'Forced' Lighting Mode is enabled", "min": "0", "max": "360", "type": "color", "default": "#009bde" },
 		{ "property": "turnOffOnShutdown", "group": "settings", "label": "Turn WLED device OFF on Shutdown", "type": "boolean", description: "This will Soft Off WLED on SignalRGB exiting or PC shutting down", "default": "false" },
+		{ "property": "rgbcw_mode", "group": "Lighting", "label": "RGBCW Mode", "type": "boolean", description: "Turn on this option if you have a WLED Color Bulb from Athom", "default": "false" },
 		{ "property": "display_mode", "label": "Display Mode", "type": "combobox", description: "Choose what you wanted this device to do", "values": ["Components", "Time", "Custom Text", "Pixel Art"], "default": "Components" },
 		{ "property": "fontSize", "label": "Font Size", "type": "combobox", description: "The mode used when 'Display Mode' is set to 'Time' or 'Custom Text'", "values": ["Small", "Medium"], "default": "Medium" },
 		{ "property": "custom_text", "label": "Display Mode: Custom Text", "type": "textfield", description: "This used when 'Display Mode' is set to 'Custom Text'", "default": "WLED" },
@@ -2109,6 +2113,15 @@ function rearrangeDisplayForSnakeLayout(display) {
 	return snakeDisplay;
 }
 
+function insertZeroes(rgb_array) {
+	const result = [];
+	for (let i = 0; i < rgb_array.length; i += 3) {
+		result.push(rgb_array[i], rgb_array[i + 1], rgb_array[i + 2]);
+		result.push(0, 0);
+	}
+	return result.filter(x => x !== undefined);
+}
+
 function hexToRgb(hex) {
 	var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
 	return result ? {
@@ -2377,16 +2390,32 @@ class WLEDDevice {
 		let RGBData = [];
 
 		if (shutdown) {
-			RGBData = device.createColorArray(colorBlack, ChannelLedCount, "Inline");
+			if (rgbcw_mode == true) {
+				RGBData = insertZeroes(device.createColorArray(colorBlack, ChannelLedCount, "Inline"));
+			} else {
+				RGBData = device.createColorArray(colorBlack, ChannelLedCount, "Inline");
+			}
 		} else if (LightingMode === "Forced") {
-			RGBData = device.createColorArray(forcedColor, ChannelLedCount, "Inline");
+			if (rgbcw_mode == true) {
+				RGBData = insertZeroes(device.createColorArray(forcedColor, ChannelLedCount, "Inline"));
+			} else {
+				RGBData = device.createColorArray(forcedColor, ChannelLedCount, "Inline");
+			}
 		} else if (componentChannel.shouldPulseColors()) {
 			ChannelLedCount = this.deviceledcount;
-
 			const pulseColor = device.getChannelPulseColor(this.name);
-			RGBData = device.createColorArray(pulseColor, ChannelLedCount, "Inline");
+
+			if (rgbcw_mode == true) {
+				RGBData = insertZeroes(device.createColorArray(pulseColor, ChannelLedCount, "Inline"));
+			} else {
+				RGBData = device.createColorArray(pulseColor, ChannelLedCount, "Inline");
+			}
 		} else {
-			RGBData = componentChannel.getColors("Inline");
+			if (rgbcw_mode == true) {
+				RGBData = insertZeroes(componentChannel.getColors("Inline"));
+			} else {
+				RGBData = componentChannel.getColors("Inline");
+			}
 		}
 
 		const NumPackets = Math.ceil(ChannelLedCount / MaxLedsInPacket);
@@ -2427,12 +2456,14 @@ class WLEDDevice {
 			}
 		}
 
+		let times = rgbcw_mode == true ? 5 : 3;
+
 		for (let CurrPacket = 0; CurrPacket < NumPackets; CurrPacket++) {
 			const startIdx = CurrPacket * MaxLedsInPacket;
 			const highByte = ((startIdx >> 8) & 0xFF);
 			const lowByte = (startIdx & 0xFF);
 			let packet = [0x04, 0x02, highByte, lowByte];
-			packet = packet.concat(RGBData.splice(0, MaxLedsInPacket * 3));
+			packet = packet.concat(RGBData.splice(0, MaxLedsInPacket * times));
 			udp.send(this.ip, this.streamingPort, packet, BIG_ENDIAN);
 		}
 	}
