@@ -89,6 +89,11 @@ Supported formats:
 </tr>
 </table>
 
+### Examples
+- hh:mm:ss tt     - 01:55:26 PM
+- HH:mm:ss        - 13:55:26
+- dd.MM.yyyy      - 15.04.2026
+
 # Display Mode: Pixel Art
 Pixel Art is an Array of ones and zeroes in an Array, One represents light on and Zero represents light off. 
 Each group of Ones and Zeroes is equals to each row on your Matrix.
@@ -139,6 +144,69 @@ Another example: SignalRGB icon on my 16x16 Matrix
 
 ![QQ_1750906664935](https://github.com/user-attachments/assets/a3984138-a460-42b2-88eb-52d8066fb057)
 I made a simple html page to create pixel art: [https://pixelart.nolliergb.com/](https://pixelart.nolliergb.com/)
+
+# Display Mode: Libre Hardware Monitor
+### Requires [Libre Hardware Monitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) and with Remote Web Server running.
+
+Supported formats:
+
+<table>
+<tr>
+<td><b>Format</b></td>
+<td><b>Description</b></td>
+<td><b>Example</b></td>
+</tr>
+<tr>
+<td>cpu_load</td>
+<td>CPU Usage</td>
+<td>20.0 %</td>
+</tr>
+<tr>
+<td>cpu_temp</td>
+<td>CPU Temperature</td>
+<td>35 °C</td>
+</tr>
+<tr>
+<td>mb_fan1-10</td>
+<td>Motherboard Fans (Supports 1-10)</td>
+<td>1899 RPM</td>
+</tr>
+<tr>
+<td>ram_load</td>
+<td>RAM Usage</td>
+<td>30.1 %</td>
+</tr>
+<tr>
+<td>ram_used</td>
+<td>Used RAM</td>
+<td>12.10 GB</td>
+</tr>
+<tr>
+<td>gpu_load</td>
+<td>GPU Usage</td>
+<td>1.2 %</td>
+</tr>
+<tr>
+<td>gpu_temp</td>
+<td>GPU Temperature</td>
+<td>30° C</td>
+</tr>
+<tr>
+<td>gpu_fan1-2</td>
+<td>GPU Fans (Supports 1-2)</td>
+<td>3000 RPM</td>
+</tr>
+<tr>
+<td>gpu_mem_load</td>
+<td>GPU VRAM Usage</td>
+<td>95.0 %</td>
+</tr>
+<tr>
+<td>gpu_mem_used</td>
+<td>Used VRAM</td>
+<td>6 GB</td>
+</tr>
+</table>
 
 # Install
 [![Click here to add this repo to SignalRGB](https://github.com/qiangqiang101/SignalRGB-Wallpaper-Engine/blob/main/addtosrgbgithub.png?raw=true)](https://srgbmods.net/s?p=addon/install?url=https://github.com/qiangqiang101/SignalRGB-WLED-Clock-PixelArt-Plugin)
