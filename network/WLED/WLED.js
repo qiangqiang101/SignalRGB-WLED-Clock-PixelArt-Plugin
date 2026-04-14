@@ -28,6 +28,9 @@ pixel_art:readonly
 paddingX:readonly
 paddingY:readonly
 rgbcw_mode:readonly
+lhmjson:readonly
+lhm_format:readonly
+lhm_update:readonly
 */
 export function ControllableParameters() {
 	return [
@@ -35,14 +38,17 @@ export function ControllableParameters() {
 		{ "property": "forcedColor", "group": "settings", "label": "Forced Color", description: "The color used when 'Forced' Lighting Mode is enabled", "min": "0", "max": "360", "type": "color", "default": "#009bde" },
 		{ "property": "turnOffOnShutdown", "group": "settings", "label": "Turn WLED device OFF on Shutdown", "type": "boolean", description: "This will Soft Off WLED on SignalRGB exiting or PC shutting down", "default": "false" },
 		{ "property": "rgbcw_mode", "group": "Lighting", "label": "RGBCW Mode", "type": "boolean", description: "Turn on this option if you have a WLED Color Bulb from Athom", "default": "false" },
-		{ "property": "display_mode", "label": "Display Mode", "type": "combobox", description: "Choose what you wanted this device to do", "values": ["Components", "Time", "Custom Text", "Pixel Art"], "default": "Components" },
+		{ "property": "display_mode", "label": "Display Mode", "type": "combobox", description: "Choose what you wanted this device to do", "values": ["Components", "Time", "Custom Text", "Pixel Art", "Libre Hardware Monitor"], "default": "Components" },
 		{ "property": "fontSize", "label": "Font Size", "type": "combobox", description: "The mode used when 'Display Mode' is set to 'Time' or 'Custom Text'", "values": ["Small", "Medium", "Large"], "default": "Medium" },
 		{ "property": "custom_text", "label": "Display Mode: Custom Text", "type": "textfield", description: "This used when 'Display Mode' is set to 'Custom Text'", "default": "WLED" },
-		{ "property": "time_format", "label": "Display Mode: Time", "type": "textfield", description: "This used when 'Display Mode' is set to 'Time'", "default": "hh:mm tt" },
+		{ "property": "time_format", "label": "Display Mode: Time", "type": "textfield", description: "Enter the time format you wish to display. For example: 'hh:mm tt' or 'HH:mm:ss' for 24 hour clock.", "default": "hh:mm tt" },
 		{ "property": "invert_color", "label": "Invert Text", "type": "boolean", description: "This will Invert text color.", "default": "false" },
+		{ "property": "lhmjson", "label": "Libre Hardware Monitor Web Server", "type": "textfield", description: "This used when 'Display Mode' is set to 'Libre Hardware Monitor'", "default": "http://127.0.0.1:8085/" },
+		{ "property": "lhm_format", "label": "Display Mode: Libre Hardware Monitor", "type": "textfield", description: "Display a collection of hardware monitoring sensors, this requires Libre Hardware Monitor running in the background.", "default": "cpu_load cpu_temp" },
+		{ "property": "lhm_update", "label": "Libre Hardware Monitor Update Interval (ms)", description: "How long to pause for next refresh.", "step": "1", "type": "number", "min": "500", "max": "10000", "default": "3000" },
 		{ "property": "scroll_direction", "label": "Scroll Direction", "type": "combobox", description: "This used when 'Display Mode' is set to 'Time' or 'Custom Text'.", "values": ["Off", "Left", "Right"], "default": "Off" },
 		{ "property": "scroll_speed", "label": "Scroll Speed", description: "This used when 'Scroll Direction' is Enabled.", "step": "1", "type": "number", "min": "1", "max": "100", "default": "50" },
-		{ "property": "pixel_art", "label": "Display Mode: Pixel Art", "type": "textfield", description: "This used when 'Display Mode' is set to 'Pixel Art'", "default": "[ [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0], [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0], [0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] ]" },
+		{ "property": "pixel_art", "label": "Display Mode: Pixel Art", "type": "textfield", description: "Create your own Pixel Art or browse community made from https://pixelart.nolliergb.com/.", "default": "[ [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0], [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0], [0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] ]" },
 		{ "property": "translucent1", "label": "Translucent 1 Level", description: "This used when 'Display Mode' is set to 'Pixel Art'", "step": "1", "type": "number", "min": "1", "max": "100", "default": "30" },
 		{ "property": "translucent2", "label": "Translucent 2 Level", description: "This used when 'Display Mode' is set to 'Pixel Art'", "step": "1", "type": "number", "min": "1", "max": "100", "default": "80" },
 		{ "property": "paddingX", "label": "Padding X", "type": "textfield", "default": 0, "filter": /^\d+$/ },
@@ -59,12 +65,10 @@ const WLEDicon = "iVBORw0KGgoAAAANSUhEUgAAA+gAAAH0CAYAAACuKActAAAACXBIWXMAAA7EAA
 const colorBlack = "#000000";
 let lastForcedUpdate = 0;
 let jobRunning = false;
-let rowOffset = 0
-let colOffset = 0
 let scrollOffset = 0;
+let lastLHMFetch = { time: 0, result: 'Loading...' };
 
 var PIXELART = [];
-
 var COMPONENT_MAPPING = [];
 
 export function onpixel_artChanged() {
@@ -192,6 +196,99 @@ function formatDateTime(format) {
 	return _format;
 }
 
+function formatLHM(format) {
+	const now = Date.now();
+
+	// If cache is fresh, return it
+	if (now - lastLHMFetch.time < lhm_update && lastLHMFetch.result !== null) {
+		return lastLHMFetch.result;
+	}
+
+	// Trigger a refresh, but don't expect immediate result
+	XmlHttp.Get(`${lhmjson}/data.json`, (xhr) => {
+		if (xhr.readyState === 4) {
+			if (xhr.status === 200) {
+				const datajson = JSON.parse(xhr.response);
+
+				// CPU
+				const cpu_load = findNodeWithParent(datajson, 'CPU Total', 'Load');
+				const cpu_temp = findNodeWithParent(datajson, 'CPU Package', 'Temperatures');
+
+				// Fans
+				const mb_fan1 = findNodeWithParent(datajson, 'Fan #1', 'Fans');
+				const mb_fan2 = findNodeWithParent(datajson, 'Fan #2', 'Fans');
+				const mb_fan3 = findNodeWithParent(datajson, 'Fan #3', 'Fans');
+				const mb_fan4 = findNodeWithParent(datajson, 'Fan #4', 'Fans');
+				const mb_fan5 = findNodeWithParent(datajson, 'Fan #5', 'Fans');
+				const mb_fan6 = findNodeWithParent(datajson, 'Fan #6', 'Fans');
+				const mb_fan7 = findNodeWithParent(datajson, 'Fan #7', 'Fans');
+				const mb_fan8 = findNodeWithParent(datajson, 'Fan #8', 'Fans');
+				const mb_fan9 = findNodeWithParent(datajson, 'Fan #9', 'Fans');
+				const mb_fan10 = findNodeWithParent(datajson, 'Fan #10', 'Fans');
+
+				// RAM
+				const ram_load = findNodeWithParent(datajson, 'Memory', 'Load');
+				const ram_used = findNodeWithParent(datajson, 'Memory Used', 'Data');
+
+				// GPU
+				const gpu_load = findNodeWithParent(datajson, 'GPU Core', 'Load');
+				const gpu_temp = findNodeWithParent(datajson, 'GPU Core', 'Temperatures');
+				const gpu_fan1 = findNodeWithParent(datajson, 'GPU Fan 1', 'Fans');
+				const gpu_fan2 = findNodeWithParent(datajson, 'GPU Fan 2', 'Fans');
+				const gpu_mem_load = findNodeWithParent(datajson, 'GPU Memory', 'Load');
+				const gpu_mem_used = findNodeWithParent(datajson, 'GPU Memory Used', 'Data');
+
+				let _format = replaceEx(format, {
+					'cpu_load': cpu_load ? cpu_load.Value : 'N/A',
+					'cpu_temp': cpu_temp ? cpu_temp.Value : 'N/A',
+					'mb_fan1': mb_fan1 ? mb_fan1.Value : 'N/A',
+					'mb_fan2': mb_fan2 ? mb_fan2.Value : 'N/A',
+					'mb_fan3': mb_fan3 ? mb_fan3.Value : 'N/A',
+					'mb_fan4': mb_fan4 ? mb_fan4.Value : 'N/A',
+					'mb_fan5': mb_fan5 ? mb_fan5.Value : 'N/A',
+					'mb_fan6': mb_fan6 ? mb_fan6.Value : 'N/A',
+					'mb_fan7': mb_fan7 ? mb_fan7.Value : 'N/A',
+					'mb_fan8': mb_fan8 ? mb_fan8.Value : 'N/A',
+					'mb_fan9': mb_fan9 ? mb_fan9.Value : 'N/A',
+					'mb_fan10': mb_fan10 ? mb_fan10.Value : 'N/A',
+					'ram_load': ram_load ? ram_load.Value : 'N/A',
+					'ram_used': ram_used ? ram_used.Value : 'N/A',
+					'gpu_load': gpu_load ? gpu_load.Value : 'N/A',
+					'gpu_temp': gpu_temp ? gpu_temp.Value : 'N/A',
+					'gpu_fan1': gpu_fan1 ? gpu_fan1.Value : 'N/A',
+					'gpu_fan2': gpu_fan2 ? gpu_fan2.Value : 'N/A',
+					'gpu_mem_load': gpu_mem_load ? gpu_mem_load.Value : 'N/A',
+					'gpu_mem_used': gpu_mem_used ? gpu_mem_used.Value : 'N/A'
+				});
+
+				lastLHMFetch.result = _format;
+				lastLHMFetch.time = now;
+			} else {
+				device.log("HTTP error:", xhr.status);
+			}
+		}
+	});
+
+	// Always return the cached result (default "Loading..." on first call)
+	return lastLHMFetch.result;
+}
+
+function findNodeWithParent(node, textToFind, parentToFind, currentParentName = "") {
+	// Check if THIS node matches and its parent matches
+	if (node.Text === textToFind && currentParentName === parentToFind) {
+		return node;
+	}
+
+	// Recursively check children, passing the current node's text as the next parent name
+	if (node.Children && node.Children.length > 0) {
+		for (let child of node.Children) {
+			let found = findNodeWithParent(child, textToFind, parentToFind, node.Text);
+			if (found) return found;
+		}
+	}
+	return null;
+}
+
 function lowerBrightnessRGB(R, G, B, factor) {
 	const newR = Math.max(0, Math.floor(R * factor));
 	const newG = Math.max(0, Math.floor(G * factor));
@@ -213,6 +310,9 @@ function displayClock() {
 			return;
 		case 'Custom Text':
 			text = custom_text;
+			break;
+		case 'Libre Hardware Monitor':
+			text = formatLHM(lhm_format);
 			break;
 		default:
 			if (now.getSeconds() % 2 !== 0) {
@@ -294,7 +394,7 @@ function getSpacing(digit, fontSize, time) {
 				case '`': case '(': case ')': case '[': case ']': case ';': case ',': case '1': return 3;
 				case 'a': case 'c': case 'I': case 'i': case 'j': case 'L': case 'l': case 'r':
 				case 'Y': case '$': case '^': case '*': case '-': case '=': case '+': case '{':
-				case '}': case '\\': case '"': case '<': case '>': case '/': case '?': return 4;
+				case '}': case '\\': case '"': case '<': case '>': case '/': case '?': case '°': return 4;
 				case 'T': case 'W': case '@': case '#': case '%': case '&': return 6;
 				default: return 5;
 			}
@@ -302,7 +402,7 @@ function getSpacing(digit, fontSize, time) {
 			switch (digit) {
 				case '|': return 2;
 				case 'i': case 'l': case '`': case "(": case ')': case ';': case ':': case "'": case ',': case '.': case ' ': return 3;
-				case 'I': case '!': case '[': case ']': case '1': return 4;
+				case 'I': case '!': case '[': case ']': case '1': case '°': return 4;
 				case 'f': case 'h': case 'j': case 'k': case 'n': case 't': case 'u': case 'x':
 				case 'y': case 'Z': case 'z': case '~': case '$': case '{': case '}': case '<': case '>': return 5;
 				default: return 6;
