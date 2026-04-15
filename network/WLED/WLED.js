@@ -13,6 +13,7 @@ export function DefaultComponentBrand() { return "CompGen"; }
 controller:readonly
 discovery: readonly
 turnOffOnShutdown:readonly
+rgbcw_mode:readonly
 LightingMode:readonly
 forcedColor:readonly
 translucent1:readonly
@@ -22,15 +23,16 @@ fontSize:readonly
 custom_text:readonly
 time_format:readonly
 invert_color:readonly
-scroll_direction:readonly
-scroll_speed:readonly
-pixel_art:readonly
-paddingX:readonly
-paddingY:readonly
-rgbcw_mode:readonly
+invert_text_color:readonly
 lhmjson:readonly
 lhm_format:readonly
 lhm_update:readonly
+scroll_direction:readonly
+scroll_speed:readonly
+pixel_art:readonly
+pixel_art_fps:readonly
+paddingX:readonly
+paddingY:readonly
 */
 export function ControllableParameters() {
 	return [
@@ -43,12 +45,14 @@ export function ControllableParameters() {
 		{ "property": "custom_text", "label": "Display Mode: Custom Text", "type": "textfield", description: "This used when 'Display Mode' is set to 'Custom Text'", "default": "WLED" },
 		{ "property": "time_format", "label": "Display Mode: Time", "type": "textfield", description: "Enter the time format you wish to display. For example: 'hh:mm tt' or 'HH:mm:ss' for 24 hour clock.", "default": "hh:mm tt" },
 		{ "property": "invert_color", "label": "Invert Text", "type": "boolean", description: "This will Invert text color.", "default": "false" },
+		{ "property": "invert_text_color", "label": "Invert Mode: Text Color", "type": "color", "description": "The color used for text when 'Invert Text' is enabled.", "default": "#000" },
 		{ "property": "lhmjson", "label": "Libre Hardware Monitor Web Server", "type": "textfield", description: "This used when 'Display Mode' is set to 'Libre Hardware Monitor'", "default": "http://127.0.0.1:8085/" },
 		{ "property": "lhm_format", "label": "Display Mode: Libre Hardware Monitor", "type": "textfield", description: "Display a collection of hardware monitoring sensors, this requires Libre Hardware Monitor running in the background.", "default": "cpu_load cpu_temp" },
 		{ "property": "lhm_update", "label": "Libre Hardware Monitor Update Interval (ms)", description: "How long to pause for next refresh.", "step": "1", "type": "number", "min": "500", "max": "10000", "default": "3000" },
 		{ "property": "scroll_direction", "label": "Scroll Direction", "type": "combobox", description: "This used when 'Display Mode' is set to 'Time' or 'Custom Text'.", "values": ["Off", "Left", "Right"], "default": "Off" },
 		{ "property": "scroll_speed", "label": "Scroll Speed", description: "This used when 'Scroll Direction' is Enabled.", "step": "1", "type": "number", "min": "1", "max": "100", "default": "50" },
 		{ "property": "pixel_art", "label": "Display Mode: Pixel Art", "type": "textfield", description: "Create your own Pixel Art or browse community made from https://pixelart.nolliergb.com/.", "default": "[ [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0], [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0], [0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] ]" },
+		{ "property": "pixel_art_fps", "label": "Pixel Art FPS (GIF)", "type": "number", description: "Clearance didn't say :(", "min": 1, "max": 60, "default": 10 },
 		{ "property": "translucent1", "label": "Translucent 1 Level", description: "This used when 'Display Mode' is set to 'Pixel Art'", "step": "1", "type": "number", "min": "1", "max": "100", "default": "30" },
 		{ "property": "translucent2", "label": "Translucent 2 Level", description: "This used when 'Display Mode' is set to 'Pixel Art'", "step": "1", "type": "number", "min": "1", "max": "100", "default": "80" },
 		{ "property": "paddingX", "label": "Padding X", "type": "textfield", "default": 0, "filter": /^\d+$/ },
@@ -354,12 +358,62 @@ function displayClock() {
 }
 
 function insertPixelArtIntoDisplay(display, art) {
-	for (let row = 0; row < art.length; row++) {
-		for (let col = 0; col < art[row].length; col++) {
-			let index = (row * displaySize.width + (displaySize.width * (paddingY - 1))) + displaySize.width + col + parseInt(paddingX);
+	if (!art) return;
+	if (typeof art === "string") {
+		try {
+			art = JSON.parse(art);
+		} catch (e) {
+			return;
+		}
+	}
+	if (art && typeof art === "object" && !Array.isArray(art)) {
+		if (art.data) art = art.data;
+		else if (art.frames) art = art.frames;
+	}
+	let currentFrameGrid = art;
+	if (Array.isArray(art) && Array.isArray(art[0]) && Array.isArray(art[0][0])) {
+		let fps = (typeof pixel_art_fps !== 'undefined') ? parseFloat(pixel_art_fps) : 5;
+		let frameIndex = Math.floor((new Date().getTime() / (1000 / fps)) % art.length);
+		currentFrameGrid = art[frameIndex];
+	}
+	let offsetX = 0;
+	if (typeof scroll_direction !== 'undefined' && scroll_direction !== "Off") {
+		const speed = (typeof scroll_speed !== 'undefined') ? parseInt(scroll_speed) : 10;
+		const time = new Date().getTime() / 1000;
+		let move = Math.floor(time * speed * 0.4);
+		offsetX = (scroll_direction === "Left") ? -move : move;
+	}
 
-			if (index < displaySize.height * displaySize.width) {
-				display[index] = art[row][col];
+	for (let row = 0; row < currentFrameGrid.length; row++) {
+		let rowData = currentFrameGrid[row];
+		let isFlatRGB = Array.isArray(rowData) && rowData.length > 50 && (rowData.length % 3 === 0);
+		let gridW = isFlatRGB ? rowData.length / 3 : rowData.length;
+
+		if (isFlatRGB) {
+			for (let i = 0; i < rowData.length; i += 3) {
+				let r = rowData[i];
+				let g = rowData[i + 1];
+				let b = rowData[i + 2];
+				if (r === 0 && g === 0 && b === 0) continue;
+
+				let col = i / 3;
+				let scrolledCol = ((col + offsetX) % gridW + gridW) % gridW;
+				let targetC = scrolledCol + parseInt(paddingX || 0);
+				let targetR = row + parseInt(paddingY || 0);
+				let index = targetR * displaySize.width + targetC;
+				if (targetR >= 0 && targetR < displaySize.height && targetC >= 0 && targetC < displaySize.width) display[index] = [r, g, b];
+			}
+		} else {
+			for (let col = 0; col < rowData.length; col++) {
+				let pixel = rowData[col];
+				let scrolledCol = ((col + offsetX) % rowData.length + rowData.length) % rowData.length;
+				let targetC = scrolledCol + parseInt(paddingX || 0);
+				let targetR = row + parseInt(paddingY || 0);
+				let index = targetR * displaySize.width + targetC;
+
+				if (targetR >= 0 && targetR < displaySize.height && targetC >= 0 && targetC < displaySize.width) {
+					display[index] = (typeof pixel === "string" && pixel[0] === "#") ? [parseInt(pixel.substr(1, 2), 16), parseInt(pixel.substr(3, 2), 16), parseInt(pixel.substr(5, 2), 16)] : pixel;
+				}
 			}
 		}
 	}
@@ -440,9 +494,7 @@ function renderTextBuffer(text, fontSize, baseRow, time) {
 
 		let spacing = getSpacing(ch, fontSize, time);
 
-		if (glyph) {
-			glyphs.push({ glyph, offset: totalWidth });
-		}
+		if (glyph) glyphs.push({ glyph, offset: totalWidth });
 		totalWidth += spacing; // always advance, even for spaces
 	}
 
@@ -457,9 +509,7 @@ function renderTextBuffer(text, fontSize, baseRow, time) {
 				let x = offset + col;
 				let y = baseRow + row;
 				if (y >= 0 && y < bufferHeight && x >= 0 && x < bufferWidth) {
-					buffer[y * bufferWidth + x] = invert_color
-						? (glyph[row][col] ? 0 : 1)
-						: (glyph[row][col] ? 1 : 0);
+					buffer[y * bufferWidth + x] = invert_color ? (glyph[row][col] ? 0 : 1) : (glyph[row][col] ? 1 : 0);
 				}
 			}
 		}
@@ -531,12 +581,27 @@ class WLEDDevice {
 			if (display != undefined) {
 				displayClock();
 				let Snake_display = rearrangeDisplayForSnakeLayout(display);
+				const isPixelArt = display_mode === 'Pixel Art';
+				let invertedTextRGB = hexToRgb(invert_text_color || "#FFFFFF");
+
 				for (let led_index = 0; led_index < Snake_display.length; led_index++) {
-					switch (Snake_display[led_index]) {
+					let pixelValue = Snake_display[led_index];
+					if (isPixelArt && invert_color) {
+						if (pixelValue === 1) pixelValue = 0;
+						else if (pixelValue === 0) pixelValue = 1;
+					}
+
+					switch (pixelValue) {
 						case 0:
-							RGBData[led_index * 3] = 0;
-							RGBData[led_index * 3 + 1] = 0;
-							RGBData[led_index * 3 + 2] = 0;
+							if (invert_color) {
+								RGBData[led_index * 3] = invertedTextRGB.r;
+								RGBData[led_index * 3 + 1] = invertedTextRGB.g;
+								RGBData[led_index * 3 + 2] = invertedTextRGB.b;
+							} else {
+								RGBData[led_index * 3] = 0;
+								RGBData[led_index * 3 + 1] = 0;
+								RGBData[led_index * 3 + 2] = 0;
+							}
 							break;
 						case 0.3:
 							let fcRGB = hexToRgb(forcedColor);
@@ -558,6 +623,17 @@ class WLEDDevice {
 							RGBData[led_index * 3 + 1] = darken2[1];
 							RGBData[led_index * 3 + 2] = darken2[2];
 							break;
+						default:
+							if (typeof pixelValue === "string" && pixelValue[0] === "#") {
+								let c = hexToRgb(pixelValue);
+								RGBData[led_index * 3] = c.r;
+								RGBData[led_index * 3 + 1] = c.g;
+								RGBData[led_index * 3 + 2] = c.b;
+							} else if (Array.isArray(pixelValue)) {
+								RGBData[led_index * 3] = pixelValue[0];
+								RGBData[led_index * 3 + 1] = pixelValue[1];
+								RGBData[led_index * 3 + 2] = pixelValue[2];
+							}
 					}
 				}
 			}
