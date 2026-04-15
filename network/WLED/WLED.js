@@ -596,6 +596,7 @@ export function Initialize() {
 		}
 	}
 
+	device.setFrameRateTarget(60);
 }
 
 export function Render() {
