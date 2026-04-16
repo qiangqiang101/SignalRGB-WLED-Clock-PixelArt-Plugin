@@ -1,4 +1,5 @@
 import { SMALL_LETTERS, LETTERS, LARGE_LETTERS, DIGITS, SMALL_DIGITS, LARGE_DIGITS } from './WLED_Text.js';
+import { ZH_FONT } from './WLED_Text_ZH.min.js';
 export function Name() { return "WLED"; }
 export function Version() { return "0.15.0"; }
 export function Type() { return "network"; }
@@ -41,7 +42,7 @@ export function ControllableParameters() {
 		{ "property": "turnOffOnShutdown", "group": "settings", "label": "Turn WLED device OFF on Shutdown", "type": "boolean", description: "This will Soft Off WLED on SignalRGB exiting or PC shutting down", "default": "false" },
 		{ "property": "rgbcw_mode", "group": "Lighting", "label": "RGBCW Mode", "type": "boolean", description: "Turn on this option if you have a WLED Color Bulb from Athom.", "default": "false" },
 		{ "property": "display_mode", "label": "Matrix Display Mode", "type": "combobox", description: "Choose what you wanted this Matrix device to do, requires WLED 2D mapping.", "values": ["Components", "Time", "Custom Text", "Pixel Art", "Libre Hardware Monitor"], "default": "Components" },
-		{ "property": "fontSize", "label": "Font Size", "type": "combobox", description: "Font size for 'Time', 'Libre Hardware Monitor' or 'Custom Text'.", "values": ["Small", "Medium", "Large"], "default": "Medium" },
+		{ "property": "fontSize", "label": "Font Size", "type": "combobox", description: "Font size for 'Time', 'Libre Hardware Monitor' or 'Custom Text'.", "values": ["Small", "Medium", "Large", "Chinese"], "default": "Medium" },
 		{ "property": "custom_text", "label": "Custom Text", "type": "textfield", description: "This used when 'Display Mode' is set to 'Custom Text'", "default": "WLED" },
 		{ "property": "time_format", "label": "Date Time Format", "type": "textfield", description: "This used when 'Display Mode' is set to 'Time', enter the time format you wish to display. For example: 'hh:mm tt' or 'HH:mm:ss' for 24 hour clock.", "default": "hh:mm tt" },
 		{ "property": "invert_color", "label": "Invert Text", "type": "boolean", description: "This will Invert color of 'Time', 'Custom Text', 'Pixel Art' and 'Libre Hardware Monitor'.", "default": "false" },
@@ -71,6 +72,8 @@ let lastForcedUpdate = 0;
 let jobRunning = false;
 let scrollOffset = 0;
 let lastLHMFetch = { time: 0, result: 'Loading...' };
+const ZH_FONT_DIGITS = Object.assign({}, ZH_FONT, LARGE_DIGITS);
+const ZH_FONT_LETTERS = Object.assign({}, ZH_FONT, LARGE_LETTERS);
 
 var PIXELART = [];
 var COMPONENT_MAPPING = [];
@@ -421,7 +424,20 @@ function insertPixelArtIntoDisplay(display, art) {
 
 function getSpacing(digit, fontSize, time) {
 	if (time) {
-		if (fontSize === 'Medium') {
+		if (fontSize === 'Chinese') {
+			if (isChineseChar(digit)) {
+				return 9;
+			} else {
+				switch (digit) {
+					case '|': return 2;
+					case 'i': case 'l': case '`': case "(": case ')': case ';': case ':': case "'": case ',': case '.': case ' ': return 3;
+					case 'I': case '!': case '[': case ']': case '1': case '°': return 4;
+					case 'f': case 'h': case 'j': case 'k': case 'n': case 't': case 'u': case 'x':
+					case 'y': case 'Z': case 'z': case '~': case '$': case '{': case '}': case '<': case '>': return 5;
+					default: return 6;
+				}
+			}
+		} else if (fontSize === 'Medium') {
 			switch (digit) {
 				case ':': case ';': case '.': return 2;
 				case ' ': return 1;
@@ -441,7 +457,20 @@ function getSpacing(digit, fontSize, time) {
 			}
 		}
 	} else {
-		if (fontSize === 'Medium') {
+		if (fontSize === 'Chinese') {
+			if (isChineseChar(digit)) {
+				return 9;
+			} else {
+				switch (digit) {
+					case '|': return 2;
+					case 'i': case 'l': case '`': case "(": case ')': case ';': case ':': case "'": case ',': case '.': case ' ': return 3;
+					case 'I': case '!': case '[': case ']': case '1': case '°': return 4;
+					case 'f': case 'h': case 'j': case 'k': case 'n': case 't': case 'u': case 'x':
+					case 'y': case 'Z': case 'z': case '~': case '$': case '{': case '}': case '<': case '>': return 5;
+					default: return 6;
+				}
+			}
+		} else if (fontSize === 'Medium') {
 			switch (digit) {
 				case ' ': return 1;
 				case '!': case '|': case ':': case "'": case '.': return 2;
@@ -481,6 +510,9 @@ function renderTextBuffer(text, fontSize, baseRow, time) {
 	for (const ch of text) {
 		let glyph;
 		switch (fontSize) {
+			case 'Chinese':
+				glyph = time ? ZH_FONT_DIGITS[ch] : ZH_FONT_LETTERS[ch];
+				break;
 			case 'Large':
 				glyph = time ? LARGE_DIGITS[ch] : LARGE_LETTERS[ch];
 				break;
@@ -650,6 +682,10 @@ class WLEDDevice {
 			udp.send(this.ip, this.streamingPort, packet, BIG_ENDIAN);
 		}
 	}
+}
+
+function isChineseChar(char) {
+	return /[\u4E00-\u9FFF]/.test(char);
 }
 
 export function Initialize() {
