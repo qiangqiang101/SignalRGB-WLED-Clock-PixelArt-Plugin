@@ -50,7 +50,7 @@ export function ControllableParameters() {
 		{ "property": "lhmjson", "label": "Libre Hardware Monitor Web Server", "type": "textfield", description: "This used when 'Display Mode' is set to 'Libre Hardware Monitor'", "default": "http://127.0.0.1:8085/" },
 		{ "property": "lhm_format", "label": "Libre Hardware Monitor Format", "type": "textfield", description: "Display a collection of hardware monitoring sensors, this requires Libre Hardware Monitor running in the background.", "default": "cpu_load cpu_temp" },
 		{ "property": "lhm_update", "label": "Libre Hardware Monitor Update Interval (ms)", description: "How long to pause for next refresh.", "step": "1", "type": "number", "min": "500", "max": "10000", "default": "3000" },
-		{ "property": "scroll_direction", "label": "Scroll Direction", "type": "combobox", description: "This used on all 'Display Mode' except for 'Components'.", "values": ["Off", "Left", "Right"], "default": "Off" },
+		{ "property": "scroll_direction", "label": "Scroll Direction", "type": "combobox", description: "This used on all 'Display Mode' except for 'Components'.", "values": ["Off", "Left", "Right", "Ping-Pong"], "default": "Off" },
 		{ "property": "scroll_speed", "label": "Scroll Speed", description: "This used when 'Scroll Direction' is Enabled.", "step": "1", "type": "number", "min": "1", "max": "100", "default": "50" },
 		{ "property": "pixel_art", "label": "Pixel Art", "type": "textfield", description: "Create your own Pixel Art or browse community made from https://pixelart.nolliergb.com/.", "default": "[ [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0], [0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0], [0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0], [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1] ]" },
 		{ "property": "pixel_art_fps", "label": "Pixel Art FPS", "type": "number", description: "FPS for Layered Pixel Art.", "min": 1, "max": 60, "default": 10 },
@@ -71,6 +71,7 @@ const colorBlack = "#000000";
 let lastForcedUpdate = 0;
 let jobRunning = false;
 let scrollOffset = 0;
+let pingPongDirection = -1;
 let lastLHMFetch = { time: 0, result: 'Loading...' };
 const ZH_FONT_DIGITS = Object.assign({}, ZH_FONT, LARGE_DIGITS);
 const ZH_FONT_LETTERS = Object.assign({}, ZH_FONT, LARGE_LETTERS);
@@ -330,7 +331,8 @@ function displayClock() {
 	}
 
 	let baseRow = parseInt(paddingY);
-	let textWithGap = text + " ".repeat(Math.floor(displaySize.width / 2));
+	// Don't add a trailing gap if we are ping-ponging!
+	let textWithGap = scroll_direction === "Ping-Pong" ? " " + text + " " : text + " ".repeat(Math.floor(displaySize.width / 2));
 	let { buffer, bufferWidth } = renderTextBuffer(textWithGap, fontSize, baseRow, display_mode == 'Time');
 
 	// --- Scroll offset update ---
@@ -338,15 +340,28 @@ function displayClock() {
 		scrollOffset -= (scroll_speed / 100);   // move text leftward
 	} else if (scroll_direction === "Right") {
 		scrollOffset += (scroll_speed / 100);   // move text rightward
+	} else if (scroll_direction === "Ping-Pong") {
+		scrollOffset += (scroll_speed / 100) * pingPongDirection;
 	}
 
-	// --- Wrap offset seamlessly ---
-	const totalSpan = bufferWidth + displaySize.width;
-	if (scrollOffset <= -bufferWidth) {
-		scrollOffset += bufferWidth; // wrap seamlessly
-	}
-	if (scrollOffset >= bufferWidth) {
-		scrollOffset -= bufferWidth; // wrap seamlessly
+	// --- Wrap or Bounce offset ---
+	if (scroll_direction === "Ping-Pong") {
+		// Calculate the furthest left the text can go before the right edge is exposed
+		let minOffset = displaySize.width - bufferWidth;
+		if (minOffset > 0) minOffset = 0; // Don't bounce if text is shorter than the matrix
+
+		if (scrollOffset <= minOffset) {
+			scrollOffset = minOffset;
+			pingPongDirection = 1; // Hit left bound, bounce right
+		} else if (scrollOffset >= 0) {
+			scrollOffset = 0;
+			pingPongDirection = -1; // Hit right bound, bounce left
+		}
+	} else {
+		// Standard seamless wrap
+		const totalSpan = bufferWidth + displaySize.width;
+		if (scrollOffset <= -bufferWidth) scrollOffset += bufferWidth;
+		if (scrollOffset >= bufferWidth) scrollOffset -= bufferWidth;
 	}
 
 	// --- Copy visible slice (tile buffer) ---
@@ -384,12 +399,30 @@ function insertPixelArtIntoDisplay(display, art) {
 		const speed = (typeof scroll_speed !== 'undefined') ? parseInt(scroll_speed) : 10;
 		const time = new Date().getTime() / 1000;
 		let move = Math.floor(time * speed * 0.4);
-		offsetX = (scroll_direction === "Left") ? -move : move;
+
+		if (scroll_direction === "Left") {
+			offsetX = -move;
+		} else if (scroll_direction === "Right") {
+			offsetX = move;
+		} else if (scroll_direction === "Ping-Pong") {
+			// Find image width based on the first row
+			let sampleRow = currentFrameGrid[0] || [];
+			let isFlat = Array.isArray(sampleRow) && (sampleRow.length % 3 === 0) && sampleRow.some(val => typeof val === 'number' && val > 1);
+			let imgW = isFlat ? sampleRow.length / 3 : sampleRow.length;
+
+			let maxScroll = Math.max(0, imgW - displaySize.width);
+			if (maxScroll > 0) {
+				// Triangle wave math to bounce between 0 and -maxScroll
+				offsetX = -(maxScroll - Math.abs((move % (maxScroll * 2)) - maxScroll));
+			} else {
+				offsetX = 0; // Don't move if image fits on screen
+			}
+		}
 	}
 
 	for (let row = 0; row < currentFrameGrid.length; row++) {
 		let rowData = currentFrameGrid[row];
-		let isFlatRGB = Array.isArray(rowData) && rowData.length > 50 && (rowData.length % 3 === 0);
+		let isFlatRGB = Array.isArray(rowData) && (rowData.length % 3 === 0) && rowData.some(val => typeof val === 'number' && val > 1);
 		let gridW = isFlatRGB ? rowData.length / 3 : rowData.length;
 
 		if (isFlatRGB) {
